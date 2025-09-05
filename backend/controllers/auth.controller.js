@@ -10,12 +10,19 @@ const { checkRestaurantValid, checkEmailExists } = require('../errors/auth.error
 
 const registerRestaurant = async (req, res, next) => {
     const { name, email, password, city, state } = req.body
+    
+    console.log('Register request received:', { name, email, city, state });
+    
     try {
         await checkRestaurantValid(req.body)
         await checkEmailExists(email)
         
+        console.log('Validation passed, creating restaurant...');
+        
         const hashedPassword = await bcrypt.hash(password, 10)
         const restaurant = await insertRestaurant(name, email, hashedPassword, city, state)
+        
+        console.log('Restaurant created:', restaurant);
         
         const token = jwt.sign(
             { id: restaurant.id, email: restaurant.email },
@@ -23,8 +30,11 @@ const registerRestaurant = async (req, res, next) => {
             { expiresIn: '7d' }
         )
         
+        console.log('Token created for restaurant ID:', restaurant.id);
+        
         res.status(201).send({ restaurant, token })
     } catch (error) {
+        console.error('Registration error:', error);
         next(error)
     }
 }

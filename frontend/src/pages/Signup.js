@@ -43,6 +43,15 @@ const Signup = () => {
     }
 
     try {
+      console.log('Attempting signup with data:', {
+        name: formData.name,
+        email: formData.email,
+        city: formData.city,
+        state: formData.state
+      });
+      
+      console.log('Making request to:', 'http://localhost:3001/api/auth/register');
+      
       const response = await axios.post('http://localhost:3001/api/auth/register', {
         name: formData.name,
         email: formData.email,
@@ -51,6 +60,8 @@ const Signup = () => {
         state: formData.state
       });
 
+      console.log('Signup successful:', response.data);
+
       // Store the token in localStorage
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('restaurant', JSON.stringify(response.data.restaurant));
@@ -58,10 +69,17 @@ const Signup = () => {
       // Redirect to dashboard
       navigate('/dashboard');
     } catch (err) {
+      console.error('Signup error:', err);
+      console.error('Error response:', err.response?.data);
+      console.error('Error status:', err.response?.status);
+      console.error('Error headers:', err.response?.headers);
+      
       if (err.response?.data?.message) {
         setError(err.response.data.message);
       } else if (err.response?.data?.error) {
         setError(err.response.data.error);
+      } else if (err.code === 'NETWORK_ERROR' || err.message.includes('Network Error')) {
+        setError('Cannot connect to server. Please check if the backend is running.');
       } else {
         setError('An error occurred during signup. Please try again.');
       }
