@@ -112,10 +112,33 @@ const Campaigns = () => {
     setCampaignDiners([]);
   };
 
-  const handleSendMessage = () => {
-    // TODO: Implement API call to send messages to all diners in the campaign
-    console.log('Sending message to all diners in campaign');
-    alert('Message sending functionality will be implemented soon!');
+  const handleSendMessage = async () => {
+    if (!editingCampaign) {
+      alert('No campaign selected for sending messages');
+      return;
+    }
+
+    try {
+      console.log(`🚀 Sending ${editingCampaign.campaign_type} messages for campaign:`, editingCampaign.name);
+      
+      const response = await campaignAPI.sendEmails(editingCampaign.id);
+      console.log('✅ Send emails response:', response.data);
+      
+      alert(`Successfully sent ${response.data.recipients_sent} ${editingCampaign.campaign_type} messages!\n\nCampaign status: ${response.data.campaign_status}\nSent at: ${new Date(response.data.sent_at).toLocaleString()}\n\n⚠️ Note: ${response.data.warning}`);
+      
+      // Refresh campaigns to show updated status
+      await fetchCampaigns();
+      
+      // Refresh campaign diners to show updated status
+      if (editingCampaign) {
+        await fetchCampaignDiners(editingCampaign.id);
+      }
+      
+    } catch (error) {
+      console.error('❌ Error sending messages:', error);
+      console.error('Error response:', error.response?.data);
+      alert(`Error sending messages: ${error.response?.data?.message || error.message}`);
+    }
   };
 
   return (

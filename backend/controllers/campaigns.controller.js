@@ -9,7 +9,11 @@ const {
     selectCampaignRecipients,
     selectDinerCampaigns,
     checkCampaignExists,
-    checkDinerExists
+    checkDinerExists,
+    updateCampaignStatusAndSentAt,
+    recordUniqueDinersForRestaurant,
+    incrementMessagesSentCounter,
+    updateCampaignRecipientsStatus
 } = require('../models/campaigns.model');
 const { checkValidParams, checkCampaignValid } = require('../errors/campaigns.errors')
 
@@ -160,6 +164,90 @@ const getDinerCampaigns = (req, res, next) => {
     .catch(next)
 }
 
+/**
+ * MOCK EMAIL FUNCTIONALITY - PRODUCTION WARNING
+ * 
+ * ⚠️  CRITICAL: This function contains mock email functionality and MUST be updated 
+ *     before production deployment to actually send real emails/SMS messages.
+ * 
+ * Current mock behavior:
+ * 1. Updates campaign status to 'active'
+ * 2. Records unique diners in restaurant's diner database
+ * 3. Increments messages_sent_this_month counter
+ * 4. Updates campaign_recipients status to 'sent'
+ * 
+ * Required for production:
+ * - Integrate with real email service (SendGrid, AWS SES, etc.)
+ * - Integrate with real SMS service (Twilio, AWS SNS, etc.)
+ * - Add proper error handling for failed sends
+ * - Add retry logic for failed deliveries
+ * - Add unsubscribe functionality
+ * - Add delivery tracking and analytics
+ * - Add rate limiting to prevent spam
+ * - Add compliance with CAN-SPAM Act and GDPR
+ */
+const sendEmails = (req, res, next) => {
+    const { campaign_id } = req.params
+    const restaurantId = req.user.id
+    
+    console.log(`🚀 MOCK EMAIL SEND: Starting email send for campaign ${campaign_id} by restaurant ${restaurantId}`);
+    
+    return checkCampaignExists(campaign_id)
+    .then(() => {
+        // Get campaign details and recipients
+        return Promise.all([
+            selectCampaignById(campaign_id),
+            selectCampaignRecipients(campaign_id)
+        ])
+    })
+    .then(([campaign, recipients]) => {
+        console.log(`📧 MOCK EMAIL SEND: Campaign "${campaign.name}" has ${recipients.length} recipients`);
+        
+        // TODO: PRODUCTION - Replace this mock with actual email/SMS sending
+        // Example integration points:
+        // - Email: SendGrid, AWS SES, Mailgun
+        // - SMS: Twilio, AWS SNS, MessageBird
+        
+        // Mock email sending process
+        const mockEmailResults = recipients.map(recipient => {
+            console.log(`📬 MOCK EMAIL SEND: Sending ${campaign.campaign_type} to ${recipient.email || recipient.phone}`);
+            return {
+                diner_id: recipient.diner_id,
+                status: 'sent', // Mock successful send
+                sent_at: new Date()
+            };
+        });
+        
+        // Update campaign status to 'active' and set sent_at timestamp
+        return updateCampaignStatusAndSentAt(campaign_id, 'active', new Date())
+        .then(() => {
+            // Record unique diners in restaurant's diner database
+            return recordUniqueDinersForRestaurant(restaurantId, recipients)
+        })
+        .then(() => {
+            // Increment messages_sent_this_month counter
+            return incrementMessagesSentCounter(restaurantId)
+        })
+        .then(() => {
+            // Update campaign_recipients status to 'sent'
+            return updateCampaignRecipientsStatus(campaign_id, mockEmailResults)
+        })
+        .then(() => {
+            console.log(`✅ MOCK EMAIL SEND: Successfully "sent" ${recipients.length} ${campaign.campaign_type} messages`);
+            
+            res.status(200).send({
+                message: `Successfully sent ${recipients.length} ${campaign.campaign_type} messages`,
+                campaign_id: campaign_id,
+                recipients_sent: recipients.length,
+                campaign_status: 'active',
+                sent_at: new Date(),
+                warning: 'This is mock functionality - real email/SMS sending must be implemented before production'
+            });
+        });
+    })
+    .catch(next)
+}
+
 module.exports = {
     getAllCampaigns,
     getCampaignById,
@@ -170,5 +258,6 @@ module.exports = {
     addDinersToCampaign,
     removeDinerFromCampaign,
     getCampaignRecipients,
-    getDinerCampaigns
+    getDinerCampaigns,
+    sendEmails
 }
