@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Settings, Search, BarChart3 } from 'lucide-react';
+import { Settings, Search, BarChart3, Plus } from 'lucide-react';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -38,6 +38,10 @@ const Dashboard = () => {
   };
 
   const handleViewCampaigns = () => {
+    navigate('/campaigns');
+  };
+
+  const handleAddNewCampaign = () => {
     navigate('/campaigns');
   };
 
@@ -99,7 +103,7 @@ const Dashboard = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
           {/* Search for Diners Button */}
           <button
             onClick={handleSearchDiners}
@@ -114,6 +118,24 @@ const Dashboard = () => {
               </h3>
               <p className="text-gray-600 text-center">
                 Find and connect with potential diners in your area
+              </p>
+            </div>
+          </button>
+
+          {/* Add New Campaign Button */}
+          <button
+            onClick={handleAddNewCampaign}
+            className="group relative bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-200 hover:border-purple-300"
+          >
+            <div className="flex flex-col items-center space-y-4">
+              <div className="p-4 bg-purple-100 rounded-full group-hover:bg-purple-200 transition-colors">
+                <Plus className="h-8 w-8 text-purple-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900">
+                Add New Campaign
+              </h3>
+              <p className="text-gray-600 text-center">
+                Create a new marketing campaign
               </p>
             </div>
           </button>

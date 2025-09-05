@@ -37,6 +37,10 @@ const getCampaignById = (req, res, next) => {
 const createCampaign = (req, res, next) => {
     const restaurantId = req.user.id
     const { name, subject, message, campaign_type } = req.body
+    
+    console.log('Creating campaign for restaurant_id:', restaurantId);
+    console.log('Campaign data:', { name, subject, message, campaign_type });
+    
     return checkCampaignValid(req.body)
     .then(() => {
         return insertCampaign(restaurantId, name, subject, message, campaign_type)
