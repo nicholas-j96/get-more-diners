@@ -20,7 +20,7 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRouter);
 app.use('/api/diners', dinersRouter);
-app.use('/api/campaigns', authenticateToken, campaignsRouter);
+app.use('/api/campaigns', campaignsRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

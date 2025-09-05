@@ -114,14 +114,32 @@ const getCampaignRecipients = (req, res, next) => {
     .catch(next)
 }
 
-const getDinerCampaigns = (req, res, next) => {
-    const { diner_id } = req.params
-    return checkDinerExists(diner_id)
+const addDinersToCampaign = (req, res, next) => {
+    const { campaign_id } = req.params
+    const { dinerIds } = req.body
+    
+    if (!dinerIds || !Array.isArray(dinerIds) || dinerIds.length === 0) {
+        return res.status(400).send({ message: 'dinerIds array is required and must not be empty' })
+    }
+    
+    return checkCampaignExists(campaign_id)
     .then(() => {
-        return selectDinerCampaigns(diner_id)
+        // Check that all diners exist
+        const dinerChecks = dinerIds.map(dinerId => checkDinerExists(dinerId))
+        return Promise.all(dinerChecks)
     })
-    .then((data) => {
-        res.status(200).send(data)
+    .then(() => {
+        // Add all diners to campaign
+        const addPromises = dinerIds.map(dinerId => addDinerToCampaignById(campaign_id, dinerId))
+        return Promise.all(addPromises)
+    })
+    .then((results) => {
+        const addedCount = results.filter(result => result).length
+        res.status(201).send({ 
+            message: `Successfully added ${addedCount} diners to campaign`,
+            addedCount,
+            totalRequested: dinerIds.length
+        })
     })
     .catch(next)
 }
@@ -133,6 +151,7 @@ module.exports = {
     updateCampaign,
     deleteCampaign,
     addDinerToCampaign,
+    addDinersToCampaign,
     removeDinerFromCampaign,
     getCampaignRecipients,
     getDinerCampaigns
