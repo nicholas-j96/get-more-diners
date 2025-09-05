@@ -4,7 +4,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 require('dotenv').config();
 
-const usersRouter = require('./routes/users.routes');
+const dinersRouter = require('./routes/diners.routes');
 const campaignsRouter = require('./routes/campaigns.routes');
 const authRouter = require('./routes/auth.routes');
 const { authenticateToken } = require('./middleware/auth.middleware');
@@ -19,7 +19,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRouter);
-app.use('/api/users', usersRouter);
+app.use('/api/diners', dinersRouter);
 app.use('/api/campaigns', authenticateToken, campaignsRouter);
 
 // Error handling middleware

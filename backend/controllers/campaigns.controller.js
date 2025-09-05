@@ -4,12 +4,12 @@ const {
     insertCampaign, 
     updateCampaignById,
     deleteCampaignById,
-    addUserToCampaignById,
-    removeUserFromCampaignById,
+    addDinerToCampaignById,
+    removeDinerFromCampaignById,
     selectCampaignRecipients,
-    selectUserCampaigns,
+    selectDinerCampaigns,
     checkCampaignExists,
-    checkUserExists
+    checkDinerExists
 } = require('../models/campaigns.model');
 const { checkValidParams, checkCampaignValid } = require('../errors/campaigns.errors')
 
@@ -72,14 +72,14 @@ const deleteCampaign = (req, res, next) => {
     .catch(next)
 }
 
-const addUserToCampaign = (req, res, next) => {
-    const { campaign_id, user_id } = req.params
+const addDinerToCampaign = (req, res, next) => {
+    const { campaign_id, diner_id } = req.params
     return Promise.all([
         checkCampaignExists(campaign_id),
-        checkUserExists(user_id)
+        checkDinerExists(diner_id)
     ])
     .then(() => {
-        return addUserToCampaignById(campaign_id, user_id)
+        return addDinerToCampaignById(campaign_id, diner_id)
     })
     .then((data) => {
         res.status(201).send(data)
@@ -87,14 +87,14 @@ const addUserToCampaign = (req, res, next) => {
     .catch(next)
 }
 
-const removeUserFromCampaign = (req, res, next) => {
-    const { campaign_id, user_id } = req.params
+const removeDinerFromCampaign = (req, res, next) => {
+    const { campaign_id, diner_id } = req.params
     return Promise.all([
         checkCampaignExists(campaign_id),
-        checkUserExists(user_id)
+        checkDinerExists(diner_id)
     ])
     .then(() => {
-        return removeUserFromCampaignById(campaign_id, user_id)
+        return removeDinerFromCampaignById(campaign_id, diner_id)
     })
     .then(() => {
         res.status(204).send()
@@ -114,11 +114,11 @@ const getCampaignRecipients = (req, res, next) => {
     .catch(next)
 }
 
-const getUserCampaigns = (req, res, next) => {
-    const { user_id } = req.params
-    return checkUserExists(user_id)
+const getDinerCampaigns = (req, res, next) => {
+    const { diner_id } = req.params
+    return checkDinerExists(diner_id)
     .then(() => {
-        return selectUserCampaigns(user_id)
+        return selectDinerCampaigns(diner_id)
     })
     .then((data) => {
         res.status(200).send(data)
@@ -132,8 +132,8 @@ module.exports = {
     createCampaign,
     updateCampaign,
     deleteCampaign,
-    addUserToCampaign,
-    removeUserFromCampaign,
+    addDinerToCampaign,
+    removeDinerFromCampaign,
     getCampaignRecipients,
-    getUserCampaigns
+    getDinerCampaigns
 }

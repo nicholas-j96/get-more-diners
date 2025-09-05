@@ -5,10 +5,10 @@ const {
     createCampaign, 
     updateCampaign,
     deleteCampaign,
-    addUserToCampaign,
-    removeUserFromCampaign,
+    addDinerToCampaign,
+    removeDinerFromCampaign,
     getCampaignRecipients,
-    getUserCampaigns
+    getDinerCampaigns
 } = require("../controllers/campaigns.controller");
 
 // Campaigns routes
@@ -28,12 +28,12 @@ campaignsRouter
     .get(getCampaignRecipients)
 
 campaignsRouter
-    .route("/:campaign_id/users/:user_id")
-    .post(addUserToCampaign)
-    .delete(removeUserFromCampaign)
+    .route("/:campaign_id/diners/:diner_id")
+    .post(addDinerToCampaign)
+    .delete(removeDinerFromCampaign)
 
 campaignsRouter
-    .route("/user/:user_id")
-    .get(getUserCampaigns)
+    .route("/diner/:diner_id")
+    .get(getDinerCampaigns)
 
 module.exports = campaignsRouter;

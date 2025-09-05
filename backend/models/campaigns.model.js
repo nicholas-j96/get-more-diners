@@ -60,23 +60,23 @@ const deleteCampaignById = (campaignId) => {
     `, [campaignId])
 }
 
-const addUserToCampaignById = (campaignId, userId) => {
+const addDinerToCampaignById = (campaignId, dinerId) => {
     return db.query(`
         INSERT INTO campaign_recipients (campaign_id, diner_id)
         VALUES ($1, $2)
         ON CONFLICT (campaign_id, diner_id) DO NOTHING
         RETURNING *
-    `, [campaignId, userId])
+    `, [campaignId, dinerId])
     .then((result) => {
         return result.rows[0]
     })
 }
 
-const removeUserFromCampaignById = (campaignId, userId) => {
+const removeDinerFromCampaignById = (campaignId, dinerId) => {
     return db.query(`
         DELETE FROM campaign_recipients 
         WHERE campaign_id = $1 AND diner_id = $2
-    `, [campaignId, userId])
+    `, [campaignId, dinerId])
 }
 
 const selectCampaignRecipients = (campaignId) => {
@@ -93,7 +93,7 @@ const selectCampaignRecipients = (campaignId) => {
     })
 }
 
-const selectUserCampaigns = (userId) => {
+const selectDinerCampaigns = (dinerId) => {
     return db.query(`
         SELECT c.id, c.name, c.subject, c.message, c.campaign_type, c.sent_at,
                r.name as restaurant_name, cr.sent_at as received_at, cr.status
@@ -102,7 +102,7 @@ const selectUserCampaigns = (userId) => {
         JOIN restaurants r ON c.restaurant_id = r.id
         WHERE cr.diner_id = $1
         ORDER BY cr.sent_at DESC
-    `, [userId])
+    `, [dinerId])
     .then((result) => {
         return result.rows
     })
@@ -119,13 +119,13 @@ const checkCampaignExists = (campaignId) => {
     })
 }
 
-const checkUserExists = (userId) => {
+const checkDinerExists = (dinerId) => {
     return db.query(`
         SELECT id FROM diners WHERE id = $1
-    `, [userId])
+    `, [dinerId])
     .then((result) => {
         if (result.rows.length === 0) {
-            return Promise.reject({ status: 404, message: 'User not found' })
+            return Promise.reject({ status: 404, message: 'Diner not found' })
         }
     })
 }
@@ -136,10 +136,10 @@ module.exports = {
     insertCampaign,
     updateCampaignById,
     deleteCampaignById,
-    addUserToCampaignById,
-    removeUserFromCampaignById,
+    addDinerToCampaignById,
+    removeDinerFromCampaignById,
     selectCampaignRecipients,
-    selectUserCampaigns,
+    selectDinerCampaigns,
     checkCampaignExists,
-    checkUserExists
+    checkDinerExists
 }

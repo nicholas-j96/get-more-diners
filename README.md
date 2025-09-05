@@ -4,10 +4,10 @@ A restaurant marketing platform that helps restaurants create and manage campaig
 
 ## Features
 
-- **User Management**: Search and filter diners by name, seniority, city, state, and dining interests
+- **Diner Management**: Search and filter diners by name, seniority, city, state, and dining interests
 - **Campaign Management**: Create, update, and delete marketing campaigns
-- **Campaign Lists**: Add users to campaign lists for targeted marketing
-- **Communication Tracking**: Track what communications each user has received
+- **Campaign Lists**: Add diners to campaign lists for targeted marketing
+- **Communication Tracking**: Track what communications each diner has received
 - **Authentication**: Secure restaurant registration and login system
 
 ## Tech Stack
@@ -24,21 +24,21 @@ get-more-diners/
 ├── backend/
 │   ├── controllers/
 │   │   ├── auth.controller.js
-│   │   ├── users.controller.js
+│   │   ├── diners.controller.js
 │   │   └── campaigns.controller.js
 │   ├── models/
 │   │   ├── auth.model.js
-│   │   ├── users.model.js
+│   │   ├── diners.model.js
 │   │   └── campaigns.model.js
 │   ├── routes/
 │   │   ├── auth.routes.js
-│   │   ├── users.routes.js
+│   │   ├── diners.routes.js
 │   │   └── campaigns.routes.js
 │   ├── middleware/
 │   │   └── auth.middleware.js
 │   ├── errors/
 │   │   ├── auth.errors.js
-│   │   ├── users.errors.js
+│   │   ├── diners.errors.js
 │   │   └── campaigns.errors.js
 │   ├── utils/
 │   │   └── db.js
@@ -65,13 +65,14 @@ get-more-diners/
 - `GET /api/auth/profile` - Get restaurant profile
 - `PATCH /api/auth/profile` - Update restaurant profile
 
-### Users (Diners)
-- `GET /api/users` - Get all users with pagination and sorting
-- `GET /api/users/name/:name` - Get users by name
-- `GET /api/users/seniority/:seniority` - Get users by seniority
-- `GET /api/users/city/:city` - Get users by city
-- `GET /api/users/state/:state` - Get users by state
-- `GET /api/users/interests/:interests` - Get users by dining interests
+### Diners
+- `GET /api/diners` - Get all diners with pagination, sorting, and filtering
+- `GET /api/diners/search` - Search diners with advanced filters
+- `GET /api/diners/:id` - Get diner by ID
+- `GET /api/diners/city/:city` - Get diners by city
+- `GET /api/diners/state/:state` - Get diners by state
+- `GET /api/diners/seniority/:seniority` - Get diners by seniority
+- `GET /api/diners/interests/:interest` - Get diners by dining interests
 
 ### Campaigns
 - `GET /api/campaigns` - Get all campaigns for authenticated restaurant
@@ -80,9 +81,9 @@ get-more-diners/
 - `PATCH /api/campaigns/:campaign_id` - Update campaign
 - `DELETE /api/campaigns/:campaign_id` - Delete campaign
 - `GET /api/campaigns/:campaign_id/recipients` - Get campaign recipients
-- `POST /api/campaigns/:campaign_id/users/:user_id` - Add user to campaign
-- `DELETE /api/campaigns/:campaign_id/users/:user_id` - Remove user from campaign
-- `GET /api/campaigns/user/:user_id` - Get campaigns for a specific user
+- `POST /api/campaigns/:campaign_id/diners/:diner_id` - Add diner to campaign
+- `DELETE /api/campaigns/:campaign_id/diners/:diner_id` - Remove diner from campaign
+- `GET /api/campaigns/diner/:diner_id` - Get campaigns for a specific diner
 
 ## Setup Instructions
 
@@ -146,18 +147,19 @@ The application uses three main tables:
 
 ## Key Features Implementation
 
-### User Search and Filtering
+### Diner Search and Filtering
 The API supports comprehensive filtering of diners by:
 - Name (partial matching)
 - Seniority level
 - City and state
 - Dining interests (using PostgreSQL arrays)
+- Advanced search with multiple filters
 
 ### Campaign Management
 - Create campaigns with email or SMS types
-- Add/remove users from campaign lists
+- Add/remove diners from campaign lists
 - Track campaign recipients and their status
-- View communication history per user
+- View communication history per diner
 
 ### Authentication
 - JWT-based authentication for restaurants
