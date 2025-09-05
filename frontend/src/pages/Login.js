@@ -1,13 +1,28 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 
 const Login = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
+          <Link 
+            to="/" 
+            className="inline-flex items-center text-blue-600 hover:text-blue-500 mb-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            Back to Home
+          </Link>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Sign in to your account
           </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Don't have an account?{' '}
+            <Link to="/signup" className="font-medium text-blue-600 hover:text-blue-500">
+              Sign up here
+            </Link>
+          </p>
         </div>
         <form className="mt-8 space-y-6">
           <div className="rounded-md shadow-sm -space-y-px">
