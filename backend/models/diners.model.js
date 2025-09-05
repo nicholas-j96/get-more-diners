@@ -1,6 +1,6 @@
 const db = require('../utils/db');
 
-const selectAllDiners = (sortBy = 'created_at', order = 'desc', limit = 10, page = 1, city = null, state = null, interests = null, seniority = null) => {
+const selectAllDiners = (sortBy = 'created_at', order = 'desc', limit = 100, page = 1, city = null, state = null, interests = null, seniority = null) => {
     const offset = (page - 1) * limit
     const validSortColumns = ['first_name', 'last_name', 'seniority', 'city', 'state', 'created_at']
     const validOrderValues = ['asc', 'desc']
@@ -172,6 +172,18 @@ const checkDinerExists = (dinerId) => {
     })
 }
 
+const selectSeniorityOptions = () => {
+    return db.query(`
+        SELECT DISTINCT seniority 
+        FROM diners 
+        WHERE seniority IS NOT NULL 
+        ORDER BY seniority
+    `)
+    .then((result) => {
+        return result.rows.map(row => row.seniority);
+    });
+};
+
 module.exports = {
     selectAllDiners,
     selectDinerById,
@@ -180,5 +192,6 @@ module.exports = {
     selectDinersByCity,
     selectDinersByState,
     selectDinersByDiningInterests,
-    checkDinerExists
+    checkDinerExists,
+    selectSeniorityOptions
 }

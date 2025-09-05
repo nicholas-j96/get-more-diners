@@ -22,11 +22,12 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           
           {/* Protected routes */}
-          <Route path="/dashboard" element={
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/diners" element={
             <>
               <Header />
               <main className="main-content">
-                <Dashboard />
+                <Users />
               </main>
             </>
           } />

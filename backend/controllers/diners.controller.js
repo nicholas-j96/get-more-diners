@@ -6,15 +6,16 @@ const {
     selectDinersByState, 
     selectDinersByDiningInterests,
     searchDinersByQuery,
-    checkDinerExists 
+    checkDinerExists,
+    selectSeniorityOptions
 } = require('../models/diners.model');
 const { checkValidParams } = require('../errors/diners.errors')
 
 const getAllDiners = (req, res, next) => {
     const sortBy = req.query.sort_by
     const order = req.query.order
-    const limit = req.query.limit
-    const page = req.query.p
+    const limit = req.query.limit || 100 // Increase default limit for searches
+    const page = req.query.p || 1
     const city = req.query.city
     const state = req.query.state
     const interests = req.query.interests
@@ -83,6 +84,14 @@ const getDinersByInterests = (req, res, next) => {
     .catch(next)
 }
 
+const getSeniorityOptions = (req, res, next) => {
+    return selectSeniorityOptions()
+    .then((data) => {
+        res.status(200).send(data)
+    })
+    .catch(next)
+}
+
 module.exports = {
     getAllDiners,
     getDinerById,
@@ -90,5 +99,6 @@ module.exports = {
     getDinersBySeniority,
     getDinersByCity,
     getDinersByState,
-    getDinersByInterests
+    getDinersByInterests,
+    getSeniorityOptions
 }

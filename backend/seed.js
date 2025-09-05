@@ -1,4 +1,4 @@
-const db = require("../connection");
+const db = require("./connection");
 const format = require("pg-format");
 
 const seed = ({ dinersData, restaurantsData, campaignsData }) => {
@@ -98,25 +98,25 @@ const seed = ({ dinersData, restaurantsData, campaignsData }) => {
         return db.query(insertRestaurantQuery)
     })
     .then(() => {
-        // Insert diners
-        const formattedDinerData = dinersData.map((diner) => {
-            return [
-                diner.first_name,
-                diner.last_name,
-                diner.seniority,
-                diner.city,
-                diner.state,
-                diner.address,
-                diner.dining_interests,
-                diner.phone,
-                diner.email
-            ]
-        })
-        const insertDinerQuery = format(
-            `INSERT INTO diners(first_name, last_name, seniority, city, state, address, dining_interests, phone, email) VALUES %L`,
-            formattedDinerData
-        );
-        return db.query(insertDinerQuery)
+        // Insert diners one by one to avoid format issues
+        console.log("Inserting diners data...");
+        const insertPromises = dinersData.map((diner) => {
+            return db.query(
+                `INSERT INTO diners(first_name, last_name, seniority, city, state, address, dining_interests, phone, email) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+                [
+                    diner.first_name,
+                    diner.last_name,
+                    diner.seniority,
+                    diner.city,
+                    diner.state,
+                    diner.address,
+                    diner.dining_interests,
+                    diner.phone,
+                    diner.email
+                ]
+            );
+        });
+        return Promise.all(insertPromises);
     })
     .then(() => {
         // Insert campaigns

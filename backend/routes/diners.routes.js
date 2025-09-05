@@ -6,7 +6,8 @@ const {
     getDinersByState, 
     getDinersBySeniority, 
     getDinersByInterests,
-    searchDiners 
+    searchDiners,
+    getSeniorityOptions
 } = require("../controllers/diners.controller");
 const { authenticateToken } = require("../middleware/auth.middleware");
 
@@ -21,6 +22,10 @@ dinersRouter
 dinersRouter
     .route("/search")
     .get(searchDiners); // GET /api/diners/search?q=searchTerm&filters[city]=Boston
+
+dinersRouter
+    .route("/seniority-options")
+    .get(getSeniorityOptions); // GET /api/diners/seniority-options
 
 dinersRouter
     .route("/:id")

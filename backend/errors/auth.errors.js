@@ -1,3 +1,5 @@
+const db = require('../utils/db')
+
 const checkRestaurantValid = (body) => {
     const { name, email, password, city, state } = body
     

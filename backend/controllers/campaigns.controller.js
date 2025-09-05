@@ -144,6 +144,18 @@ const addDinersToCampaign = (req, res, next) => {
     .catch(next)
 }
 
+const getDinerCampaigns = (req, res, next) => {
+    const { diner_id } = req.params
+    return checkDinerExists(diner_id)
+    .then(() => {
+        return selectDinerCampaigns(diner_id)
+    })
+    .then((data) => {
+        res.status(200).send(data)
+    })
+    .catch(next)
+}
+
 module.exports = {
     getAllCampaigns,
     getCampaignById,
