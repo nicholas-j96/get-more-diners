@@ -8,6 +8,7 @@ CREATE TABLE restaurants (
     password_hash VARCHAR(255) NOT NULL,
     city VARCHAR(255),
     state VARCHAR(255),
+    messages_sent_this_month INTEGER DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -34,6 +35,7 @@ CREATE TABLE campaigns (
     subject VARCHAR(255),
     message TEXT,
     campaign_type VARCHAR(20) CHECK (campaign_type IN ('email', 'sms')),
+    status VARCHAR(20) DEFAULT 'draft' CHECK (status IN ('draft', 'active', 'sent', 'cancelled')),
     sent_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -45,6 +47,7 @@ CREATE TABLE campaign_recipients (
     diner_id INTEGER REFERENCES diners(id) ON DELETE CASCADE,
     sent_at TIMESTAMP,
     status VARCHAR(20) DEFAULT 'pending',
+    messages_sent INTEGER DEFAULT 0,
     UNIQUE(campaign_id, diner_id)
 );
 

@@ -82,7 +82,7 @@ const removeDinerFromCampaignById = (campaignId, dinerId) => {
 const selectCampaignRecipients = (campaignId) => {
     return db.query(`
         SELECT d.id, d.first_name, d.last_name, d.email, d.phone, d.city, d.state,
-               cr.sent_at, cr.status
+               cr.sent_at, cr.status, cr.messages_sent
         FROM campaign_recipients cr
         JOIN diners d ON cr.diner_id = d.id
         WHERE cr.campaign_id = $1
@@ -130,6 +130,77 @@ const checkDinerExists = (dinerId) => {
     })
 }
 
+/**
+ * Updates campaign status and sent_at timestamp
+ */
+const updateCampaignStatusAndSentAt = (campaignId, status, sentAt) => {
+    return db.query(`
+        UPDATE campaigns 
+        SET status = $1, sent_at = $2
+        WHERE id = $3
+        RETURNING *
+    `, [status, sentAt, campaignId])
+    .then((result) => {
+        return result.rows[0]
+    })
+}
+
+/**
+ * Records unique diners in restaurant's diner database
+ * Only adds diners that weren't already associated with this restaurant
+ */
+const recordUniqueDinersForRestaurant = (restaurantId, recipients) => {
+    // For now, we'll just log this action since diners are global
+    // In a real system, you might want to track restaurant-specific diner relationships
+    console.log(`📝 MOCK: Recording ${recipients.length} unique diners for restaurant ${restaurantId}`);
+    
+    // TODO: PRODUCTION - Implement actual diner-restaurant relationship tracking
+    // This could involve:
+    // - Creating a restaurant_diners table
+    // - Tracking when diners were first contacted by each restaurant
+    // - Maintaining opt-in/opt-out preferences per restaurant
+    
+    return Promise.resolve({
+        message: `Mock: Recorded ${recipients.length} diners for restaurant`,
+        diners_recorded: recipients.length
+    });
+}
+
+/**
+ * Increments the messages_sent_this_month counter for the restaurant
+ */
+const incrementMessagesSentCounter = (restaurantId) => {
+    return db.query(`
+        UPDATE restaurants 
+        SET messages_sent_this_month = messages_sent_this_month + 1
+        WHERE id = $1
+        RETURNING messages_sent_this_month
+    `, [restaurantId])
+    .then((result) => {
+        console.log(`📊 MOCK: Incremented messages counter for restaurant ${restaurantId}. New count: ${result.rows[0].messages_sent_this_month}`);
+        return result.rows[0]
+    })
+}
+
+/**
+ * Updates campaign_recipients status to 'sent' and sets sent_at timestamp
+ */
+const updateCampaignRecipientsStatus = (campaignId, emailResults) => {
+    const dinerIds = emailResults.map(result => result.diner_id);
+    const sentAt = new Date();
+    
+    return db.query(`
+        UPDATE campaign_recipients 
+        SET status = 'sent', sent_at = $1, messages_sent = messages_sent + 1
+        WHERE campaign_id = $2 AND diner_id = ANY($3)
+        RETURNING *
+    `, [sentAt, campaignId, dinerIds])
+    .then((result) => {
+        console.log(`📬 MOCK: Updated ${result.rows.length} campaign recipients to 'sent' status and incremented message count`);
+        return result.rows
+    })
+}
+
 module.exports = {
     selectAllCampaigns,
     selectCampaignById,
@@ -141,5 +212,9 @@ module.exports = {
     selectCampaignRecipients,
     selectDinerCampaigns,
     checkCampaignExists,
-    checkDinerExists
+    checkDinerExists,
+    updateCampaignStatusAndSentAt,
+    recordUniqueDinersForRestaurant,
+    incrementMessagesSentCounter,
+    updateCampaignRecipientsStatus
 }

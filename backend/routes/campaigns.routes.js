@@ -9,7 +9,8 @@ const {
     removeDinerFromCampaign,
     getCampaignRecipients,
     getDinerCampaigns,
-    addDinersToCampaign
+    addDinersToCampaign,
+    sendEmails
 } = require("../controllers/campaigns.controller");
 const { authenticateToken } = require("../middleware/auth.middleware");
 
@@ -32,6 +33,10 @@ campaignsRouter
     .route("/:campaign_id/recipients")
     .get(getCampaignRecipients)  // GET /api/campaigns/123/recipients
     .post(addDinersToCampaign);  // POST /api/campaigns/123/recipients { dinerIds: [1,2,3] }
+
+campaignsRouter
+    .route("/:campaign_id/send")
+    .post(sendEmails);  // POST /api/campaigns/123/send - Send emails/SMS to all recipients
 
 campaignsRouter
     .route("/:campaign_id/diners/:diner_id")

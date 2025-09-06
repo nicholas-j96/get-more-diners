@@ -61,6 +61,9 @@ export const campaignAPI = {
   
   // Add diners to campaign
   addDinersToCampaign: (campaignId, dinerIds) => api.post(`/campaigns/${campaignId}/recipients`, { dinerIds }),
+  
+  // Send emails/SMS to all campaign recipients
+  sendEmails: (campaignId) => api.post(`/campaigns/${campaignId}/send`),
 };
 
 export default api;
