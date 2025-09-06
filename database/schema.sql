@@ -47,6 +47,7 @@ CREATE TABLE campaign_recipients (
     diner_id INTEGER REFERENCES diners(id) ON DELETE CASCADE,
     sent_at TIMESTAMP,
     status VARCHAR(20) DEFAULT 'pending',
+    messages_sent INTEGER DEFAULT 0,
     UNIQUE(campaign_id, diner_id)
 );
 

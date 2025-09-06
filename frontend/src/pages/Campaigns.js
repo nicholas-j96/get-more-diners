@@ -15,9 +15,25 @@ const Campaigns = () => {
   const [editingCampaign, setEditingCampaign] = useState(null);
   const [campaignDiners, setCampaignDiners] = useState([]);
   const [loadingDiners, setLoadingDiners] = useState(false);
+  const [preSelectedDiners, setPreSelectedDiners] = useState([]);
 
   useEffect(() => {
     fetchCampaigns();
+  }, []);
+
+  // Check for pre-selected diners from Users page
+  useEffect(() => {
+    const storedDiners = localStorage.getItem('preSelectedDiners');
+    if (storedDiners) {
+      try {
+        const diners = JSON.parse(storedDiners);
+        setPreSelectedDiners(diners);
+        setShowCreateForm(true); // Automatically open the form
+        console.log('Pre-selected diners loaded:', diners);
+      } catch (error) {
+        console.error('Error parsing pre-selected diners:', error);
+      }
+    }
   }, []);
 
   const fetchCampaigns = async () => {
@@ -45,6 +61,18 @@ const Campaigns = () => {
       console.log('Creating campaign with data:', newCampaign);
       const response = await campaignAPI.createCampaign(newCampaign);
       console.log('Campaign created successfully:', response.data);
+      
+      // If there are pre-selected diners, add them to the campaign
+      if (preSelectedDiners.length > 0) {
+        console.log('Adding pre-selected diners to campaign:', preSelectedDiners);
+        const dinerIds = preSelectedDiners.map(diner => diner.id);
+        await campaignAPI.addDinersToCampaign(response.data.id, dinerIds);
+        console.log('Pre-selected diners added to campaign');
+        
+        // Clear the pre-selected diners from localStorage and state
+        localStorage.removeItem('preSelectedDiners');
+        setPreSelectedDiners([]);
+      }
       
       // Reset form and refresh campaigns list
       setNewCampaign({ name: '', subject: '', message: '', campaign_type: 'email' });
@@ -110,6 +138,11 @@ const Campaigns = () => {
     setNewCampaign({ name: '', subject: '', message: '', campaign_type: 'email' });
     setShowCreateForm(false);
     setCampaignDiners([]);
+    // Clear pre-selected diners if canceling
+    if (preSelectedDiners.length > 0) {
+      localStorage.removeItem('preSelectedDiners');
+      setPreSelectedDiners([]);
+    }
   };
 
   const handleSendMessage = async () => {
@@ -233,6 +266,55 @@ const Campaigns = () => {
               </button>
             </div>
           </form>
+          
+          {/* Show pre-selected diners table when creating new campaign with pre-selected diners */}
+          {!editingCampaign && preSelectedDiners.length > 0 && (
+            <div className="mt-6">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Pre-selected Diners ({preSelectedDiners.length})
+              </h3>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Name
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Email
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Phone
+                      </th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Location
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {preSelectedDiners.map((diner) => (
+                      <tr key={diner.id}>
+                        <td className="px-4 py-2 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900">
+                            {diner.first_name} {diner.last_name}
+                          </div>
+                        </td>
+                        <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                          {diner.email || 'N/A'}
+                        </td>
+                        <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                          {diner.phone || 'N/A'}
+                        </td>
+                        <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                          {diner.city}, {diner.state}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -305,7 +387,10 @@ const Campaigns = () => {
                             ? 'bg-green-100 text-green-800' 
                             : 'bg-yellow-100 text-yellow-800'
                         }`}>
-                          {diner.status || 'pending'}
+                          {diner.status === 'sent' 
+                            ? `${diner.messages_sent || 1} message${(diner.messages_sent || 1) !== 1 ? 's' : ''} sent`
+                            : (diner.status || 'pending')
+                          }
                         </span>
                       </td>
                     </tr>

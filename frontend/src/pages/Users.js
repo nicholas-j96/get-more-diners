@@ -166,7 +166,7 @@ const Users = () => {
 
   const handleCreateNewCampaign = () => {
     // Store selected diners in localStorage for the campaigns page
-    localStorage.setItem('selectedDinersForCampaign', JSON.stringify(dinersToAdd));
+    localStorage.setItem('preSelectedDiners', JSON.stringify(dinersToAdd));
     setShowCampaignModal(false);
     navigate('/campaigns');
   };
@@ -314,17 +314,23 @@ const Users = () => {
               
               {/* Center: Add to Campaign Button */}
               <div className="flex-1 flex justify-center">
-                {selectedDiners.length > 0 && (
-                  <button
-                    onClick={() => {
-                      const selectedDinerObjects = filteredDiners.filter(diner => selectedDiners.includes(diner.id));
-                      handleAddToCampaign(selectedDinerObjects);
-                    }}
-                    className="px-6 py-2 text-sm font-medium bg-green-600 hover:bg-green-700 text-white rounded-md shadow-sm hover:shadow-md transition-all duration-200"
-                  >
-                    Add to Campaign ({selectedDiners.length})
-                  </button>
-                )}
+                <button
+                  onClick={() => {
+                    if (selectedDiners.length === 0) {
+                      alert('Please select diners to add to a campaign');
+                      return;
+                    }
+                    const selectedDinerObjects = filteredDiners.filter(diner => selectedDiners.includes(diner.id));
+                    handleAddToCampaign(selectedDinerObjects);
+                  }}
+                  className={`px-6 py-2 text-sm font-medium rounded-md shadow-sm hover:shadow-md transition-all duration-200 ${
+                    selectedDiners.length > 0 
+                      ? 'bg-green-600 hover:bg-green-700 text-white' 
+                      : 'bg-gray-300 hover:bg-gray-400 text-gray-600'
+                  }`}
+                >
+                  Add to Campaign {selectedDiners.length > 0 && `(${selectedDiners.length})`}
+                </button>
               </div>
               
               <div className="flex items-center">

@@ -212,7 +212,7 @@ const sendEmails = (req, res, next) => {
         const mockEmailResults = recipients.map(recipient => {
             console.log(`📬 MOCK EMAIL SEND: Sending ${campaign.campaign_type} to ${recipient.email || recipient.phone}`);
             return {
-                diner_id: recipient.diner_id,
+                diner_id: recipient.id, // Fixed: use recipient.id instead of recipient.diner_id
                 status: 'sent', // Mock successful send
                 sent_at: new Date()
             };

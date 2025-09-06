@@ -82,7 +82,7 @@ const removeDinerFromCampaignById = (campaignId, dinerId) => {
 const selectCampaignRecipients = (campaignId) => {
     return db.query(`
         SELECT d.id, d.first_name, d.last_name, d.email, d.phone, d.city, d.state,
-               cr.sent_at, cr.status
+               cr.sent_at, cr.status, cr.messages_sent
         FROM campaign_recipients cr
         JOIN diners d ON cr.diner_id = d.id
         WHERE cr.campaign_id = $1
@@ -191,12 +191,12 @@ const updateCampaignRecipientsStatus = (campaignId, emailResults) => {
     
     return db.query(`
         UPDATE campaign_recipients 
-        SET status = 'sent', sent_at = $1
+        SET status = 'sent', sent_at = $1, messages_sent = messages_sent + 1
         WHERE campaign_id = $2 AND diner_id = ANY($3)
         RETURNING *
     `, [sentAt, campaignId, dinerIds])
     .then((result) => {
-        console.log(`📬 MOCK: Updated ${result.rows.length} campaign recipients to 'sent' status`);
+        console.log(`📬 MOCK: Updated ${result.rows.length} campaign recipients to 'sent' status and incremented message count`);
         return result.rows
     })
 }
