@@ -13,7 +13,11 @@ const {
     updateCampaignStatusAndSentAt,
     recordUniqueDinersForRestaurant,
     incrementMessagesSentCounter,
-    updateCampaignRecipientsStatus
+    updateCampaignRecipientsStatus,
+    recordMessageHistory,
+    getMessageHistory,
+    getMessageDetail,
+    getDashboardStats
 } = require('../models/campaigns.model');
 const { checkValidParams, checkCampaignValid } = require('../errors/campaigns.errors')
 
@@ -229,7 +233,11 @@ const sendEmails = (req, res, next) => {
             return incrementMessagesSentCounter(restaurantId)
         })
         .then(() => {
-            // Update campaign_recipients status to 'sent'
+            // Record message in history FIRST
+            return recordMessageHistory(campaign_id, campaign.subject, recipients.length)
+        })
+        .then(() => {
+            // Update campaign_recipients status to 'sent' ONLY after successful history recording
             return updateCampaignRecipientsStatus(campaign_id, mockEmailResults)
         })
         .then(() => {
@@ -248,6 +256,36 @@ const sendEmails = (req, res, next) => {
     .catch(next)
 }
 
+const getDashboardStatsController = (req, res, next) => {
+    const restaurantId = req.user.id
+    return getDashboardStats(restaurantId)
+    .then((data) => {
+        res.status(200).send(data)
+    })
+    .catch(next)
+}
+
+const getMessageHistoryController = (req, res, next) => {
+    const { campaign_id } = req.params
+    return checkCampaignExists(campaign_id)
+    .then(() => {
+        return getMessageHistory(campaign_id)
+    })
+    .then((data) => {
+        res.status(200).send(data)
+    })
+    .catch(next)
+}
+
+const getMessageDetailController = (req, res, next) => {
+    const { message_id } = req.params
+    return getMessageDetail(message_id)
+    .then((data) => {
+        res.status(200).send(data)
+    })
+    .catch(next)
+}
+
 module.exports = {
     getAllCampaigns,
     getCampaignById,
@@ -259,5 +297,8 @@ module.exports = {
     removeDinerFromCampaign,
     getCampaignRecipients,
     getDinerCampaigns,
-    sendEmails
+    sendEmails,
+    getDashboardStatsController,
+    getMessageHistoryController,
+    getMessageDetailController
 }

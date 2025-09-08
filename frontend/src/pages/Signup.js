@@ -50,9 +50,10 @@ const Signup = () => {
         state: formData.state
       });
       
-      console.log('Making request to:', 'http://localhost:3001/api/auth/register');
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
+      console.log('Making request to:', apiUrl + '/auth/register');
       
-      const response = await axios.post('http://localhost:3001/api/auth/register', {
+      const response = await axios.post(apiUrl + '/auth/register', {
         name: formData.name,
         email: formData.email,
         password: formData.password,

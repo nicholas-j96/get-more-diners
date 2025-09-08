@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
 
 // Create axios instance with default config
 const api = axios.create({
@@ -64,6 +64,15 @@ export const campaignAPI = {
   
   // Send emails/SMS to all campaign recipients
   sendEmails: (campaignId) => api.post(`/campaigns/${campaignId}/send`),
+  
+  // Get dashboard statistics
+  getDashboardStats: () => api.get('/campaigns/dashboard/stats'),
+  
+  // Get message history for a campaign
+  getMessageHistory: (campaignId) => api.get(`/campaigns/${campaignId}/message-history`),
+  
+  // Get detailed message data
+  getMessageDetail: (messageId) => api.get(`/campaigns/message/${messageId}`),
 };
 
 export default api;
