@@ -37,8 +37,7 @@ const Dashboard = () => {
   }, [navigate]);
 
   const handleAccountSettings = () => {
-    // TODO: Navigate to account settings page
-    console.log('Account settings clicked');
+    navigate('/account-settings');
   };
 
   const handleSearchDiners = () => {

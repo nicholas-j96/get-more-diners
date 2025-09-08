@@ -4,8 +4,11 @@ const {
     loginRestaurant, 
     logoutRestaurant,
     getRestaurantProfile,
-    updateRestaurantProfile
+    updateRestaurantProfile,
+    updateAccountSettings,
+    deleteAccount
 } = require("../controllers/auth.controller");
+const { authenticateToken } = require("../middleware/auth.middleware");
 
 // Authentication routes
 authRouter
@@ -22,7 +25,12 @@ authRouter
 
 authRouter
     .route("/profile")
-    .get(getRestaurantProfile)
-    .patch(updateRestaurantProfile)
+    .get(authenticateToken, getRestaurantProfile)
+    .patch(authenticateToken, updateAccountSettings)
+
+// Account management routes
+authRouter
+    .route("/account")
+    .delete(authenticateToken, deleteAccount)
 
 module.exports = authRouter;

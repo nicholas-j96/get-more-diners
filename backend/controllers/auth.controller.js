@@ -4,7 +4,8 @@ const {
     selectRestaurantByEmail, 
     insertRestaurant, 
     selectRestaurantById,
-    updateRestaurantById
+    updateRestaurantById,
+    deleteRestaurantById
 } = require('../models/auth.model');
 const { checkRestaurantValid, checkEmailExists } = require('../errors/auth.errors')
 
@@ -90,10 +91,99 @@ const updateRestaurantProfile = (req, res, next) => {
     .catch(next)
 }
 
+const updateAccountSettings = async (req, res, next) => {
+    const restaurantId = req.user.id
+    const { name, email, currentPassword, newPassword } = req.body
+    
+    try {
+        // Get current restaurant data
+        const restaurant = await selectRestaurantById(restaurantId)
+        if (!restaurant) {
+            return res.status(404).send({ message: 'Restaurant not found' })
+        }
+
+        // Check if email is being changed and if it already exists
+        if (email && email !== restaurant.email) {
+            const existingRestaurant = await selectRestaurantByEmail(email)
+            if (existingRestaurant) {
+                return res.status(400).send({ message: 'Email already exists' })
+            }
+        }
+
+        // If password is being changed, verify current password
+        if (currentPassword && newPassword) {
+            const isValidPassword = await bcrypt.compare(currentPassword, restaurant.password_hash)
+            if (!isValidPassword) {
+                return res.status(400).send({ message: 'Current password is incorrect' })
+            }
+        }
+
+        // Prepare update data
+        const updateData = {
+            name: name || restaurant.name,
+            email: email || restaurant.email,
+            city: restaurant.city,
+            state: restaurant.state
+        }
+
+        // Hash new password if provided
+        if (newPassword) {
+            updateData.password_hash = await bcrypt.hash(newPassword, 10)
+        }
+
+        // Update restaurant
+        const updatedRestaurant = await updateRestaurantById(
+            restaurantId, 
+            updateData.name, 
+            updateData.city, 
+            updateData.state,
+            updateData.email,
+            updateData.password_hash
+        )
+
+        res.status(200).send({
+            message: 'Account updated successfully',
+            restaurant: {
+                id: updatedRestaurant.id,
+                name: updatedRestaurant.name,
+                email: updatedRestaurant.email,
+                city: updatedRestaurant.city,
+                state: updatedRestaurant.state,
+                created_at: updatedRestaurant.created_at
+            }
+        })
+    } catch (error) {
+        console.error('Update account error:', error)
+        next(error)
+    }
+}
+
+const deleteAccount = async (req, res, next) => {
+    const restaurantId = req.user.id
+    
+    try {
+        // Get restaurant data to verify it exists
+        const restaurant = await selectRestaurantById(restaurantId)
+        if (!restaurant) {
+            return res.status(404).send({ message: 'Restaurant not found' })
+        }
+
+        // Delete restaurant (this will cascade delete related data)
+        await deleteRestaurantById(restaurantId)
+        
+        res.status(200).send({ message: 'Account deleted successfully' })
+    } catch (error) {
+        console.error('Delete account error:', error)
+        next(error)
+    }
+}
+
 module.exports = {
     registerRestaurant,
     loginRestaurant,
     logoutRestaurant,
     getRestaurantProfile,
-    updateRestaurantProfile
+    updateRestaurantProfile,
+    updateAccountSettings,
+    deleteAccount
 }

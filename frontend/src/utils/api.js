@@ -81,4 +81,16 @@ export const aiAPI = {
   generateCampaignContent: (description) => api.post('/ai/campaign/generate', { campaignDescription: description }),
 };
 
+// Account API functions
+export const accountAPI = {
+  // Get current user profile
+  getProfile: () => api.get('/auth/profile'),
+  
+  // Update account settings (name, email, password)
+  updateProfile: (data) => api.patch('/auth/profile', data),
+  
+  // Delete account
+  deleteAccount: () => api.delete('/auth/account'),
+};
+
 export default api;
