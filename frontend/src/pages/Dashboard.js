@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Settings, Search, BarChart3, Plus } from 'lucide-react';
 import { campaignAPI } from '../utils/api';
+import '../dashboard.css';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -63,33 +64,33 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+      <div className="dashboard-loading">
+        <div className="dashboard-spinner">
+          <div className="dashboard-spinner-icon"></div>
+          <p className="dashboard-spinner-text">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="dashboard-container">
       {/* Header with Account Settings */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+      <div className="dashboard-header">
+        <div className="dashboard-header-content">
+          <div className="dashboard-header-inner">
             <div className="flex items-center">
               <button
                 onClick={handleAccountSettings}
-                className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
+                className="dashboard-settings-btn"
               >
                 <Settings className="h-6 w-6" />
-                <span className="text-sm font-medium">Account Settings</span>
+                <span>Account Settings</span>
               </button>
             </div>
             
-            <div className="flex items-center space-x-4">
-              <h1 className="text-xl font-semibold text-gray-900">
+            <div className="dashboard-header-right">
+              <h1 className="dashboard-welcome">
                 Welcome, {restaurant?.name}
               </h1>
               <button
@@ -98,7 +99,7 @@ const Dashboard = () => {
                   localStorage.removeItem('restaurant');
                   navigate('/');
                 }}
-                className="text-sm text-gray-500 hover:text-gray-700"
+                className="dashboard-logout"
               >
                 Logout
               </button>
@@ -108,31 +109,31 @@ const Dashboard = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+      <div className="dashboard-main">
+        <div className="dashboard-hero">
+          <h2 className="dashboard-hero-title">
             Restaurant Dashboard
           </h2>
-          <p className="text-lg text-gray-600">
+          <p className="dashboard-hero-subtitle">
             Manage your diner outreach and marketing campaigns
           </p>
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+        <div className="dashboard-actions">
           {/* Search for Diners Button */}
           <button
             onClick={handleSearchDiners}
-            className="group relative bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-200 hover:border-blue-300"
+            className="dashboard-action-card"
           >
-            <div className="flex flex-col items-center space-y-4">
-              <div className="p-4 bg-blue-100 rounded-full group-hover:bg-blue-200 transition-colors">
-                <Search className="h-8 w-8 text-blue-600" />
+            <div className="dashboard-action-content">
+              <div className="dashboard-action-icon search">
+                <Search className="h-8 w-8 text-orange-500" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900">
+              <h3 className="dashboard-action-title">
                 Search for Diners
               </h3>
-              <p className="text-gray-600 text-center">
+              <p className="dashboard-action-description">
                 Find and connect with potential diners in your area
               </p>
             </div>
@@ -141,16 +142,16 @@ const Dashboard = () => {
           {/* Add New Campaign Button */}
           <button
             onClick={handleAddNewCampaign}
-            className="group relative bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-200 hover:border-purple-300"
+            className="dashboard-action-card"
           >
-            <div className="flex flex-col items-center space-y-4">
-              <div className="p-4 bg-purple-100 rounded-full group-hover:bg-purple-200 transition-colors">
-                <Plus className="h-8 w-8 text-purple-600" />
+            <div className="dashboard-action-content">
+              <div className="dashboard-action-icon campaign">
+                <Plus className="h-8 w-8 text-orange-500" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900">
+              <h3 className="dashboard-action-title">
                 Add New Campaign
               </h3>
-              <p className="text-gray-600 text-center">
+              <p className="dashboard-action-description">
                 Create a new marketing campaign
               </p>
             </div>
@@ -159,16 +160,16 @@ const Dashboard = () => {
           {/* View Past Campaigns Button */}
           <button
             onClick={handleViewCampaigns}
-            className="group relative bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-200 hover:border-green-300"
+            className="dashboard-action-card"
           >
-            <div className="flex flex-col items-center space-y-4">
-              <div className="p-4 bg-green-100 rounded-full group-hover:bg-green-200 transition-colors">
-                <BarChart3 className="h-8 w-8 text-green-600" />
+            <div className="dashboard-action-content">
+              <div className="dashboard-action-icon analytics">
+                <BarChart3 className="h-8 w-8 text-green-500" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900">
+              <h3 className="dashboard-action-title">
                 View Past Campaigns
               </h3>
-              <p className="text-gray-600 text-center">
+              <p className="dashboard-action-description">
                 Review and manage your marketing campaigns
               </p>
             </div>
@@ -176,23 +177,23 @@ const Dashboard = () => {
         </div>
 
         {/* Quick Stats */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Total Diners</h3>
-            <p className="text-3xl font-bold text-blue-600">{stats.unique_diners}</p>
-            <p className="text-sm text-gray-500 mt-1">In your campaigns</p>
+        <div className="dashboard-stats">
+          <div className="dashboard-stat-card">
+            <h3 className="dashboard-stat-title">Total Diners</h3>
+            <p className="dashboard-stat-value diners">{stats.unique_diners}</p>
+            <p className="dashboard-stat-subtitle">In your campaigns</p>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Active Campaigns</h3>
-            <p className="text-3xl font-bold text-green-600">{stats.active_campaigns}</p>
-            <p className="text-sm text-gray-500 mt-1">Currently running</p>
+          <div className="dashboard-stat-card">
+            <h3 className="dashboard-stat-title">Active Campaigns</h3>
+            <p className="dashboard-stat-value campaigns">{stats.active_campaigns}</p>
+            <p className="dashboard-stat-subtitle">Currently running</p>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Messages Sent</h3>
-            <p className="text-3xl font-bold text-purple-600">{stats.messages_sent_this_month}</p>
-            <p className="text-sm text-gray-500 mt-1">This month</p>
+          <div className="dashboard-stat-card">
+            <h3 className="dashboard-stat-title">Messages Sent</h3>
+            <p className="dashboard-stat-value messages">{stats.messages_sent_this_month}</p>
+            <p className="dashboard-stat-subtitle">This month</p>
           </div>
         </div>
       </div>

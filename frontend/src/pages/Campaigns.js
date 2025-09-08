@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { campaignAPI } from '../utils/api';
 import AIAssistModal from '../components/AIAssistModal';
+import '../campaigns.css';
 
 const Campaigns = () => {
   const [campaigns, setCampaigns] = useState([]);
@@ -230,12 +231,12 @@ const Campaigns = () => {
   };
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Campaigns</h1>
+    <div className="campaigns-container">
+      <div className="campaigns-header">
+        <h1 className="campaigns-title">Campaigns</h1>
         <button
           onClick={() => setShowCreateForm(!showCreateForm)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
+          className="campaigns-create-btn"
         >
           {showCreateForm ? 'Cancel' : 'Create New Campaign'}
         </button>
@@ -243,104 +244,102 @@ const Campaigns = () => {
 
       {/* Create/Edit Campaign Form */}
       {showCreateForm && (
-        <div className="bg-white p-6 rounded-lg shadow mb-6">
-          <h2 className="text-xl font-bold mb-4">
+        <div className="campaigns-form-card">
+          <h2 className="campaigns-form-title">
             {editingCampaign ? 'Edit Campaign' : 'Create New Campaign'}
           </h2>
           <form onSubmit={editingCampaign ? handleUpdateCampaign : handleCreateCampaign}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="campaigns-form-grid">
+              <div className="campaigns-form-group">
+                <label className="campaigns-form-label">
                   Campaign Name
                 </label>
                 <input
                   type="text"
                   value={newCampaign.name}
                   onChange={(e) => setNewCampaign({...newCampaign, name: e.target.value})}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
+                  className="campaigns-form-input"
                   required
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+              <div className="campaigns-form-group">
+                <label className="campaigns-form-label">
                   Campaign Type
                 </label>
                 <select
                   value={newCampaign.campaign_type}
                   onChange={(e) => setNewCampaign({...newCampaign, campaign_type: e.target.value})}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
+                  className="campaigns-form-select"
                 >
                   <option value="email">Email</option>
                   <option value="sms">SMS</option>
                 </select>
               </div>
             </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="campaigns-form-group">
+              <label className="campaigns-form-label">
                 Subject
               </label>
               <input
                 type="text"
                 value={newCampaign.subject}
                 onChange={(e) => setNewCampaign({...newCampaign, subject: e.target.value})}
-                className="w-full border border-gray-300 rounded-md px-3 py-2"
+                className="campaigns-form-input"
                 required
               />
             </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="campaigns-form-group">
+              <label className="campaigns-form-label">
                 Message
               </label>
               <textarea
                 value={newCampaign.message}
                 onChange={(e) => setNewCampaign({...newCampaign, message: e.target.value})}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 h-32"
+                className="campaigns-form-textarea"
                 required
               />
             </div>
-            <div className="flex justify-between items-center">
-              <div className="flex space-x-3">
-                <button
-                  type="button"
-                  onClick={() => setShowAIAssist(true)}
-                  className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md flex items-center space-x-2"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
-                  <span>AI Assist</span>
-                </button>
-                <button
-                  type="submit"
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md"
-                >
-                  {editingCampaign ? 'Update Campaign' : 'Save Campaign'}
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    console.log('🔍 DEBUG: Send Message button clicked');
-                    console.log('🔍 DEBUG: Event:', e);
-                    console.log('🔍 DEBUG: Event target:', e.target);
-                    handleSendMessage();
-                  }}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md"
-                >
-                  Send Message
-                </button>
-                <button
-                  type="button"
-                  onClick={handleCancelEdit}
-                  className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md"
-                >
-                  Cancel
-                </button>
-              </div>
+            <div className="campaigns-form-actions">
+              <button
+                type="button"
+                onClick={() => setShowAIAssist(true)}
+                className="campaigns-form-btn primary"
+              >
+                <svg className="ai-assist-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+                AI Assist
+              </button>
+              <button
+                type="submit"
+                className="campaigns-form-btn success"
+              >
+                {editingCampaign ? 'Update Campaign' : 'Save Campaign'}
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  console.log('🔍 DEBUG: Send Message button clicked');
+                  console.log('🔍 DEBUG: Event:', e);
+                  console.log('🔍 DEBUG: Event target:', e.target);
+                  handleSendMessage();
+                }}
+                className="campaigns-form-btn send"
+              >
+                Send Message
+              </button>
+              <button
+                type="button"
+                onClick={handleCancelEdit}
+                className="campaigns-form-btn secondary"
+              >
+                Cancel
+              </button>
               <button
                 type="button"
                 onClick={handleViewMessageHistory}
                 disabled={loadingMessageHistory}
-                className="bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white px-4 py-2 rounded-md"
+                className={`campaigns-form-btn ${loadingMessageHistory ? 'secondary disabled' : 'info'}`}
               >
                 {loadingMessageHistory ? 'Loading...' : 'View Past Messages'}
               </button>
@@ -349,49 +348,27 @@ const Campaigns = () => {
           
           {/* Show pre-selected diners table when creating new campaign with pre-selected diners */}
           {!editingCampaign && preSelectedDiners.length > 0 && (
-            <div className="mt-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Pre-selected Diners ({preSelectedDiners.length})
-              </h3>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-100">
-                    <tr>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Name
-                      </th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Email
-                      </th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Phone
-                      </th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Location
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {preSelectedDiners.map((diner) => (
-                      <tr key={diner.id}>
-                        <td className="px-4 py-2 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
-                            {diner.first_name} {diner.last_name}
-                          </div>
-                        </td>
-                        <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                          {diner.email || 'N/A'}
-                        </td>
-                        <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                          {diner.phone || 'N/A'}
-                        </td>
-                        <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                          {diner.city}, {diner.state}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+            <div className="campaigns-diners-section">
+              <div className="campaigns-diners-header">
+                <h3 className="campaigns-diners-title">
+                  Pre-selected Diners ({preSelectedDiners.length})
+                </h3>
+              </div>
+              <div className="campaigns-diners-content">
+                <div className="campaigns-diners-list">
+                  {preSelectedDiners.map((diner) => (
+                    <div key={diner.id} className="campaigns-diner-item">
+                      <div className="campaigns-diner-info">
+                        <div className="campaigns-diner-name">
+                          {diner.first_name} {diner.last_name}
+                        </div>
+                        <div className="campaigns-diner-email">
+                          {diner.email || 'N/A'} • {diner.phone || 'N/A'} • {diner.city}, {diner.state}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -399,73 +376,73 @@ const Campaigns = () => {
       )}
 
       {/* Campaigns List or Diners List */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="campaigns-list">
         {editingCampaign ? (
           // Show diners table when editing a campaign
-          <div>
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900">
+          <div className="campaigns-diners-section">
+            <div className="campaigns-diners-header">
+              <h3 className="campaigns-diners-title">
                 Diners in "{editingCampaign.name}" Campaign
               </h3>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="campaigns-diners-subtitle">
                 {campaignDiners.length} diner{campaignDiners.length !== 1 ? 's' : ''} in this campaign
               </p>
             </div>
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="campaigns-recipients-table">
+              <thead className="campaigns-recipients-thead">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="campaigns-recipients-th">
                     Name
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="campaigns-recipients-th">
                     Email
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="campaigns-recipients-th">
                     Phone
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="campaigns-recipients-th">
                     Location
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="campaigns-recipients-th">
                     Status
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="campaigns-recipients-tbody">
                 {loadingDiners ? (
                   <tr>
-                    <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
+                    <td colSpan="5" className="campaigns-recipients-td campaigns-recipients-td-empty">
                       Loading diners...
                     </td>
                   </tr>
                 ) : campaignDiners.length === 0 ? (
                   <tr>
-                    <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
+                    <td colSpan="5" className="campaigns-recipients-td campaigns-recipients-td-empty">
                       No diners added to this campaign yet.
                     </td>
                   </tr>
                 ) : (
                   campaignDiners.map((diner) => (
-                    <tr key={diner.id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
+                    <tr key={diner.id} className="campaigns-recipients-tr">
+                      <td className="campaigns-recipients-td">
+                        <div className="campaigns-recipients-name">
                           {diner.first_name} {diner.last_name}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="campaigns-recipients-td">
                         {diner.email || 'N/A'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="campaigns-recipients-td">
                         {diner.phone || 'N/A'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="campaigns-recipients-td">
                         {diner.city}, {diner.state}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      <td className="campaigns-recipients-td">
+                        <span className={`campaigns-recipients-status ${
                           diner.status === 'sent' 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-yellow-100 text-yellow-800'
+                            ? 'campaigns-recipients-status-sent' 
+                            : 'campaigns-recipients-status-pending'
                         }`}>
                           {diner.status === 'sent' 
                             ? `${diner.messages_sent || 1} message${(diner.messages_sent || 1) !== 1 ? 's' : ''} sent`
@@ -480,75 +457,56 @@ const Campaigns = () => {
             </table>
           </div>
         ) : (
-          // Show campaigns table when not editing
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Type
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Recipients
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Created
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {loading ? (
-                <tr>
-                  <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
-                    Loading...
-                  </td>
-                </tr>
-              ) : campaigns.length === 0 ? (
-                <tr>
-                  <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
-                    No campaigns found. Create your first campaign!
-                  </td>
-                </tr>
-              ) : (
-                campaigns.map((campaign) => (
-                  <tr 
-                    key={campaign.id}
-                    onClick={() => handleEditCampaign(campaign)}
-                    className="cursor-pointer hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
-                        {campaign.name}
-                      </div>
-                      <div className="text-sm text-gray-500">{campaign.subject}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        campaign.campaign_type === 'email' 
-                          ? 'bg-blue-100 text-blue-800' 
-                          : 'bg-green-100 text-green-800'
-                      }`}>
+          // Show campaigns list when not editing
+          <>
+            {loading ? (
+              <div className="campaigns-loading">
+                <div className="campaigns-loading-spinner"></div>
+                Loading campaigns...
+              </div>
+            ) : campaigns.length === 0 ? (
+              <div className="campaigns-empty">
+                <div className="campaigns-empty-icon">
+                  <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
+                </div>
+                <h3 className="campaigns-empty-title">No campaigns found</h3>
+                <p className="campaigns-empty-description">Create your first campaign to get started!</p>
+              </div>
+            ) : (
+              campaigns.map((campaign) => (
+                <div key={campaign.id} className="campaigns-item">
+                  <div className="campaigns-item-header">
+                    <h3 className="campaigns-item-title">{campaign.name}</h3>
+                    <p className="campaigns-item-subtitle">{campaign.subject}</p>
+                    <div className="campaigns-item-meta">
+                      <span className={`campaigns-item-type ${campaign.campaign_type}`}>
                         {campaign.campaign_type.toUpperCase()}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {campaign.recipient_count || 0}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {new Date(campaign.created_at).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <span className="campaigns-item-count">
+                        {campaign.recipient_count || 0} recipients
+                      </span>
+                      <span className="campaigns-item-count">
+                        Created {new Date(campaign.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="campaigns-item-body">
+                    <p className="campaigns-item-message">{campaign.message}</p>
+                    <div className="campaigns-item-actions">
+                      <button 
+                        onClick={() => handleEditCampaign(campaign)}
+                        className="campaigns-action-btn primary"
+                      >
+                        Edit Campaign
+                      </button>
                       <button 
                         onClick={(e) => {
                           e.stopPropagation();
                           // TODO: Implement view recipients functionality
                         }}
-                        className="text-blue-600 hover:text-blue-900 mr-3"
+                        className="campaigns-action-btn secondary"
                       >
                         View Recipients
                       </button>
@@ -557,61 +515,61 @@ const Campaigns = () => {
                           e.stopPropagation();
                           // TODO: Implement delete functionality
                         }}
-                        className="text-red-600 hover:text-red-900"
+                        className="campaigns-action-btn secondary"
                       >
                         Delete
                       </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </>
         )}
       </div>
 
       {/* Message History Modal */}
       {showMessageHistory && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Message History - {editingCampaign?.name}</h2>
+        <div className="message-history-modal-overlay">
+          <div className="message-history-modal">
+            <div className="message-history-modal-header">
+              <h2 className="message-history-modal-title">Message History - {editingCampaign?.name}</h2>
               <button
                 onClick={() => setShowMessageHistory(false)}
-                className="text-gray-500 hover:text-gray-700 text-2xl"
+                className="message-history-modal-close"
               >
                 ×
               </button>
             </div>
             
             {messageHistory.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
+              <div className="message-history-empty">
                 <p>No messages have been sent for this campaign yet.</p>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="message-history-list">
                 {messageHistory.map((message, index) => (
                   <div 
                     key={message.id} 
-                    className="border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                    className="message-history-item"
                     onClick={() => handleMessageClick(message.id)}
                   >
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-semibold text-lg text-blue-600 hover:text-blue-800">
+                    <div className="message-history-item-header">
+                      <h3 className="message-history-item-title">
                         {message.subject}
                       </h3>
-                      <span className="text-sm text-gray-500">
+                      <span className="message-history-item-date">
                         {new Date(message.sent_at).toLocaleString()}
                       </span>
                     </div>
-                    <div className="text-sm text-gray-600">
-                      <span className="font-medium">Recipients:</span> {message.recipient_count}
+                    <div className="message-history-item-stats">
+                      <span className="message-history-item-stats-label">Recipients:</span> {message.recipient_count}
                     </div>
-                    <div className="text-sm text-gray-600 mt-1">
-                      <span className="font-medium">Open Rate:</span> {(message.open_rate * 100).toFixed(1)}% | 
-                      <span className="font-medium ml-2">Click Rate:</span> {(message.click_rate * 100).toFixed(1)}%
+                    <div className="message-history-item-stats">
+                      <span className="message-history-item-stats-label">Open Rate:</span> {(message.open_rate * 100).toFixed(1)}% | 
+                      <span className="message-history-item-stats-label"> Click Rate:</span> {(message.click_rate * 100).toFixed(1)}%
                     </div>
-                    <div className="text-xs text-gray-400 mt-2">
+                    <div className="message-history-item-hint">
                       Click to view details
                     </div>
                   </div>
@@ -619,10 +577,10 @@ const Campaigns = () => {
               </div>
             )}
             
-            <div className="mt-6 flex justify-end">
+            <div className="message-history-modal-footer">
               <button
                 onClick={() => setShowMessageHistory(false)}
-                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md"
+                className="campaigns-form-btn info"
               >
                 Close
               </button>
@@ -633,86 +591,86 @@ const Campaigns = () => {
 
       {/* Message Detail Modal */}
       {showMessageDetail && messageDetail && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Message Details</h2>
+        <div className="message-detail-modal-overlay">
+          <div className="message-detail-modal">
+            <div className="message-detail-modal-header">
+              <h2 className="message-detail-modal-title">Message Details</h2>
               <button
                 onClick={() => setShowMessageDetail(false)}
-                className="text-gray-500 hover:text-gray-700 text-2xl"
+                className="message-detail-modal-close"
               >
                 ×
               </button>
             </div>
             
-            <div className="space-y-6">
+            <div className="message-detail-content">
               {/* Message Header */}
-              <div className="border-b pb-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{messageDetail.subject}</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                  <div>
-                    <span className="font-medium text-gray-600">Sent:</span>
-                    <p className="text-gray-900">{new Date(messageDetail.sent_at).toLocaleString()}</p>
+              <div className="message-detail-header">
+                <h3 className="message-detail-subject">{messageDetail.subject}</h3>
+                <div className="message-detail-stats-grid">
+                  <div className="message-detail-stat">
+                    <span className="message-detail-stat-label">Sent:</span>
+                    <p className="message-detail-stat-value">{new Date(messageDetail.sent_at).toLocaleString()}</p>
                   </div>
-                  <div>
-                    <span className="font-medium text-gray-600">Type:</span>
-                    <p className="text-gray-900">{messageDetail.campaign_type.toUpperCase()}</p>
+                  <div className="message-detail-stat">
+                    <span className="message-detail-stat-label">Type:</span>
+                    <p className="message-detail-stat-value">{messageDetail.campaign_type.toUpperCase()}</p>
                   </div>
-                  <div>
-                    <span className="font-medium text-gray-600">Recipients:</span>
-                    <p className="text-gray-900">{messageDetail.recipient_count}</p>
+                  <div className="message-detail-stat">
+                    <span className="message-detail-stat-label">Recipients:</span>
+                    <p className="message-detail-stat-value">{messageDetail.recipient_count}</p>
                   </div>
-                  <div>
-                    <span className="font-medium text-gray-600">Open Rate:</span>
-                    <p className="text-green-600 font-semibold">{(messageDetail.open_rate * 100).toFixed(1)}%</p>
+                  <div className="message-detail-stat">
+                    <span className="message-detail-stat-label">Open Rate:</span>
+                    <p className="message-detail-stat-value success">{(messageDetail.open_rate * 100).toFixed(1)}%</p>
                   </div>
                 </div>
-                <div className="mt-2">
-                  <span className="font-medium text-gray-600">Click Rate:</span>
-                  <p className="text-blue-600 font-semibold">{(messageDetail.click_rate * 100).toFixed(1)}%</p>
+                <div className="message-detail-click-rate">
+                  <span className="message-detail-stat-label">Click Rate:</span>
+                  <p className="message-detail-stat-value primary">{(messageDetail.click_rate * 100).toFixed(1)}%</p>
                 </div>
               </div>
 
               {/* Message Content */}
-              <div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-3">Message Content</h4>
-                <div className="bg-gray-50 p-4 rounded-lg border">
-                  <div className="whitespace-pre-wrap text-gray-800">
+              <div className="message-detail-section">
+                <h4 className="message-detail-section-title">Message Content</h4>
+                <div className="message-detail-content-box">
+                  <div className="message-detail-message-text">
                     {messageDetail.campaign_message}
                   </div>
                 </div>
               </div>
 
               {/* Analytics Summary */}
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h4 className="text-lg font-semibold text-blue-900 mb-3">Performance Summary</h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600">
+              <div className="message-detail-analytics">
+                <h4 className="message-detail-analytics-title">Performance Summary</h4>
+                <div className="message-detail-analytics-grid">
+                  <div className="message-detail-analytics-item">
+                    <div className="message-detail-analytics-number">
                       {Math.round(messageDetail.recipient_count * messageDetail.open_rate)}
                     </div>
-                    <div className="text-sm text-blue-800">Estimated Opens</div>
+                    <div className="message-detail-analytics-label">Estimated Opens</div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-green-600">
+                  <div className="message-detail-analytics-item">
+                    <div className="message-detail-analytics-number success">
                       {Math.round(messageDetail.recipient_count * messageDetail.click_rate)}
                     </div>
-                    <div className="text-sm text-green-800">Estimated Clicks</div>
+                    <div className="message-detail-analytics-label">Estimated Clicks</div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-purple-600">
+                  <div className="message-detail-analytics-item">
+                    <div className="message-detail-analytics-number purple">
                       {((messageDetail.click_rate / messageDetail.open_rate) * 100).toFixed(1)}%
                     </div>
-                    <div className="text-sm text-purple-800">Click-to-Open Rate</div>
+                    <div className="message-detail-analytics-label">Click-to-Open Rate</div>
                   </div>
                 </div>
               </div>
             </div>
             
-            <div className="mt-6 flex justify-end">
+            <div className="message-detail-modal-footer">
               <button
                 onClick={() => setShowMessageDetail(false)}
-                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md"
+                className="campaigns-form-btn info"
               >
                 Close
               </button>
