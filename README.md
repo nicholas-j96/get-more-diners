@@ -146,8 +146,15 @@ cd get-more-diners
 ```
 
 ### **2. Database Setup**
+
+#### **Option A: Local PostgreSQL (Development)**
 ```bash
-# Create PostgreSQL database
+# Install PostgreSQL locally
+# Ubuntu/Debian: sudo apt-get install postgresql postgresql-contrib
+# macOS: brew install postgresql
+# Windows: Download from postgresql.org
+
+# Create local database
 createdb get_more_diners_dev
 
 # Run database schema
@@ -155,6 +162,40 @@ psql get_more_diners_dev < database/schema.sql
 
 # Optional: Seed with sample data
 cd backend && node run-seed.js
+```
+
+#### **Option B: Supabase (Production/Cloud)**
+```bash
+# 1. Create Supabase project
+# Visit https://supabase.com and create a new project
+
+# 2. Get connection details
+# Go to Settings > Database > Connection string
+# Copy the connection string (it looks like):
+# postgresql://postgres:[password]@db.[project-ref].supabase.co:5432/postgres
+
+# 3. Run schema on Supabase
+# Use Supabase SQL Editor or psql:
+psql "postgresql://postgres:[password]@db.[project-ref].supabase.co:5432/postgres" < database/schema.sql
+
+# 4. Configure environment variables (see Backend Setup below)
+```
+
+#### **Option C: Other Cloud Providers**
+- **Railway**: `railway add postgresql` then connect via provided URL
+- **Neon**: Create database at neon.tech and use connection string
+- **PlanetScale**: Use MySQL-compatible connection (requires schema migration)
+- **AWS RDS**: Create PostgreSQL instance and use connection details
+
+#### **Database Configuration**
+The application uses these environment variables for database connection:
+```bash
+DB_HOST=localhost          # Database host (or cloud provider URL)
+DB_PORT=5432              # Database port (usually 5432 for PostgreSQL)
+DB_NAME=get_more_diners_dev # Database name
+DB_USER=postgres          # Database username
+DB_PASSWORD=your_password # Database password
+DB_SSL=false              # SSL connection (set to true for cloud databases)
 ```
 
 ### **3. Backend Setup**
@@ -166,14 +207,35 @@ npm install
 
 # Set up environment variables
 cp env.example .env
-# Edit .env with your database credentials:
-# PORT=3000
-# DB_HOST=localhost
-# DB_PORT=5432
-# DB_NAME=get_more_diners_dev
-# DB_USER=your_username
-# DB_PASSWORD=your_password
-# JWT_SECRET=your_jwt_secret
+# Edit .env with your configuration:
+
+# Server Configuration
+PORT=3000
+JWT_SECRET=your_jwt_secret_here
+
+# Database Configuration (choose one):
+
+# For Local PostgreSQL:
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=get_more_diners_dev
+DB_USER=postgres
+DB_PASSWORD=your_local_password
+DB_SSL=false
+
+# For Supabase:
+DB_HOST=db.[project-ref].supabase.co
+DB_PORT=5432
+DB_NAME=postgres
+DB_USER=postgres
+DB_PASSWORD=your_supabase_password
+DB_SSL=true
+
+# For Railway/Neon (use full connection string):
+DATABASE_URL=postgresql://user:password@host:port/database
+
+# Optional: AI Configuration
+GEMINI_API_KEY=your_gemini_api_key_here
 
 # Start development server
 npm run dev
@@ -263,6 +325,61 @@ See `AI_SETUP.md` for detailed instructions.
 - **Relationship Integrity**: Foreign key constraints
 - **Data Validation**: Proper data types and constraints
 - **Analytics Support**: Structured data for performance tracking
+
+### **Production Database Considerations**
+
+#### **Supabase Setup (Recommended)**
+```bash
+# 1. Create Supabase project
+# Visit https://supabase.com/dashboard
+
+# 2. Configure Row Level Security (RLS)
+# Enable RLS on all tables for multi-tenant security:
+ALTER TABLE restaurants ENABLE ROW LEVEL SECURITY;
+ALTER TABLE campaigns ENABLE ROW LEVEL SECURITY;
+ALTER TABLE campaign_recipients ENABLE ROW LEVEL SECURITY;
+ALTER TABLE message_history ENABLE ROW LEVEL SECURITY;
+
+# 3. Create RLS policies (example for restaurants table)
+CREATE POLICY "Restaurants can only see their own data" ON restaurants
+  FOR ALL USING (auth.uid()::text = id::text);
+
+# 4. Set up database backups
+# Supabase provides automatic backups, but consider additional backup strategies
+
+# 5. Configure connection pooling
+# Use Supabase's built-in connection pooling for production workloads
+```
+
+#### **Database Migration Strategy**
+```bash
+# For production deployments, use migration scripts:
+
+# 1. Create migration file
+mkdir -p backend/migrations
+touch backend/migrations/001_initial_schema.sql
+
+# 2. Copy schema.sql to migration file
+cp database/schema.sql backend/migrations/001_initial_schema.sql
+
+# 3. Run migrations in production
+psql $DATABASE_URL < backend/migrations/001_initial_schema.sql
+```
+
+#### **Environment-Specific Configuration**
+```bash
+# Development (.env.development)
+DB_HOST=localhost
+DB_SSL=false
+NODE_ENV=development
+
+# Production (.env.production)
+DB_HOST=db.[project-ref].supabase.co
+DB_SSL=true
+NODE_ENV=production
+DB_POOL_SIZE=20
+DB_IDLE_TIMEOUT=30000
+```
 
 ## 🔒 Security Features
 
