@@ -75,4 +75,10 @@ export const campaignAPI = {
   getMessageDetail: (messageId) => api.get(`/campaigns/message/${messageId}`),
 };
 
+// AI API functions
+export const aiAPI = {
+  // Generate campaign content using AI
+  generateCampaignContent: (description) => api.post('/ai/campaign/generate', { campaignDescription: description }),
+};
+
 export default api;
