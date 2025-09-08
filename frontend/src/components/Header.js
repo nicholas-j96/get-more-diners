@@ -19,6 +19,7 @@ const Header = () => {
           <Link to="/dashboard" className="hover:text-blue-200">Dashboard</Link>
           <Link to="/users" className="hover:text-blue-200">Diners</Link>
           <Link to="/campaigns" className="hover:text-blue-200">Campaigns</Link>
+          <Link to="/account-settings" className="hover:text-blue-200">Account Settings</Link>
           <button 
             onClick={handleLogout}
             className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded"

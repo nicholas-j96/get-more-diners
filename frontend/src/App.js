@@ -10,6 +10,7 @@ import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import Users from './pages/Users';
 import Campaigns from './pages/Campaigns';
+import AccountSettings from './pages/AccountSettings';
 
 function App() {
   return (
@@ -44,6 +45,14 @@ function App() {
               <Header />
               <main className="main-content">
                 <Campaigns />
+              </main>
+            </>
+          } />
+          <Route path="/account-settings" element={
+            <>
+              <Header />
+              <main className="main-content">
+                <AccountSettings />
               </main>
             </>
           } />
