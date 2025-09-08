@@ -62,7 +62,14 @@ const createCampaign = (req, res, next) => {
 const updateCampaign = (req, res, next) => {
     const { campaign_id } = req.params
     const { name, subject, message, campaign_type } = req.body
-    return checkCampaignExists(campaign_id)
+    
+    console.log('Updating campaign:', campaign_id);
+    console.log('Campaign data:', { name, subject, message, campaign_type });
+    
+    return checkCampaignValid(req.body)
+    .then(() => {
+        return checkCampaignExists(campaign_id)
+    })
     .then(() => {
         return updateCampaignById(campaign_id, name, subject, message, campaign_type)
     })

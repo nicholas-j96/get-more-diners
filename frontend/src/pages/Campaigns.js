@@ -137,6 +137,21 @@ const Campaigns = () => {
     e.preventDefault();
     try {
       console.log('Updating campaign with data:', newCampaign);
+      
+      // Validate required fields
+      if (!newCampaign.name.trim()) {
+        alert('Campaign name is required');
+        return;
+      }
+      if (!newCampaign.subject.trim()) {
+        alert('Campaign subject is required');
+        return;
+      }
+      if (!newCampaign.message.trim()) {
+        alert('Campaign message is required');
+        return;
+      }
+      
       const response = await campaignAPI.updateCampaign(editingCampaign.id, newCampaign);
       console.log('Campaign updated successfully:', response.data);
       
@@ -148,7 +163,10 @@ const Campaigns = () => {
     } catch (error) {
       console.error('Error updating campaign:', error);
       console.error('Error response:', error.response?.data);
-      // Handle error - could show a toast notification
+      
+      // Show user-friendly error message
+      const errorMessage = error.response?.data?.message || 'Failed to update campaign. Please try again.';
+      alert(`Error: ${errorMessage}`);
     }
   };
 
