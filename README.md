@@ -1,175 +1,325 @@
 # Get More Diners
 
-A restaurant marketing platform that helps restaurants create and manage campaigns to reach potential diners based on their preferences, location, and demographics.
+A comprehensive restaurant marketing platform that helps restaurants create, manage, and track marketing campaigns to reach potential diners based on their preferences, location, and demographics. Features AI-powered campaign generation, modern dark theme UI, and comprehensive campaign analytics.
 
-## Features
+## 🚀 Current Features
 
-- **Diner Management**: Search and filter diners by name, seniority, city, state, and dining interests
-- **Campaign Management**: Create, update, and delete marketing campaigns
-- **Campaign Lists**: Add diners to campaign lists for targeted marketing
-- **Communication Tracking**: Track what communications each diner has received
-- **Authentication**: Secure restaurant registration and login system
+### **Core Functionality**
+- **Restaurant Authentication**: Secure registration, login, and account management
+- **Diner Management**: Comprehensive search and filtering by name, seniority, city, state, and dining interests
+- **Campaign Management**: Create, update, delete, and send marketing campaigns
+- **Campaign Analytics**: Track open rates, click rates, and message performance
+- **Message History**: View detailed history of all sent campaigns with analytics
+- **Account Settings**: Update profile information, change passwords, and account deletion
 
-## Tech Stack
+### **AI-Powered Features**
+- **AI Campaign Assistant**: Natural language campaign generation using Google Gemini API
+- **Smart Content Creation**: Auto-fill campaign fields based on natural language descriptions
+- **Campaign Optimization**: AI-suggested improvements for better engagement
 
-- **Backend**: Node.js, Express.js, PostgreSQL
-- **Frontend**: React, Tailwind CSS
-- **Authentication**: JWT tokens
+### **User Interface**
+- **Modern Dark Theme**: Professional gunmetal grey and orange accent color scheme
+- **Responsive Design**: Optimized for desktop and mobile devices
+- **Interactive Components**: Hover effects, transitions, and smooth animations
+- **Custom CSS**: Tailwind-free implementation with component-based styling
+
+### **Dashboard & Analytics**
+- **Campaign Statistics**: Real-time metrics for sent messages and active campaigns
+- **Performance Tracking**: Open rates, click rates, and engagement metrics
+- **Campaign History**: Detailed view of all past campaigns and their performance
+- **Recipient Management**: Add/remove diners from campaign lists
+
+## 🛠 Tech Stack
+
+### **Backend**
+- **Runtime**: Node.js with Express.js
 - **Database**: PostgreSQL with optimized indexes
+- **Authentication**: JWT tokens with bcrypt password hashing
+- **AI Integration**: Google Gemini API for campaign generation
+- **Development**: Nodemon for hot reloading
 
-## Project Structure
+### **Frontend**
+- **Framework**: React 18 with React Router
+- **Styling**: Custom CSS with CSS Custom Properties
+- **Icons**: Lucide React icon library
+- **HTTP Client**: Axios for API communication
+- **Development**: React Scripts with hot reloading
+
+### **Database**
+- **Primary DB**: PostgreSQL
+- **Tables**: restaurants, diners, campaigns, campaign_recipients, message_history
+- **Features**: Optimized queries, proper indexing, relationship management
+
+## 📁 Project Structure
 
 ```
 get-more-diners/
 ├── backend/
 │   ├── controllers/
-│   │   ├── auth.controller.js
-│   │   ├── diners.controller.js
-│   │   └── campaigns.controller.js
+│   │   ├── auth.controller.js      # Authentication & account management
+│   │   ├── campaigns.controller.js # Campaign CRUD & analytics
+│   │   ├── diners.controller.js    # Diner search & filtering
+│   │   └── ai.controller.js        # AI campaign generation
 │   ├── models/
-│   │   ├── auth.model.js
-│   │   ├── diners.model.js
-│   │   └── campaigns.model.js
+│   │   ├── auth.model.js           # Restaurant data models
+│   │   ├── campaigns.model.js      # Campaign & analytics models
+│   │   └── diners.model.js         # Diner data models
 │   ├── routes/
-│   │   ├── auth.routes.js
-│   │   ├── diners.routes.js
-│   │   └── campaigns.routes.js
+│   │   ├── auth.routes.js          # Authentication endpoints
+│   │   ├── campaigns.routes.js     # Campaign management endpoints
+│   │   ├── diners.routes.js        # Diner management endpoints
+│   │   └── ai.routes.js            # AI generation endpoints
 │   ├── middleware/
-│   │   └── auth.middleware.js
-│   ├── errors/
-│   │   ├── auth.errors.js
-│   │   ├── diners.errors.js
-│   │   └── campaigns.errors.js
+│   │   └── auth.middleware.js      # JWT authentication middleware
+│   ├── errors/                     # Custom error handling
 │   ├── utils/
-│   │   └── db.js
-│   ├── app.js
+│   │   └── db.js                   # Database connection utilities
+│   ├── app.js                      # Express app configuration
 │   └── package.json
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
+│   │   │   ├── Header.js           # Navigation header
+│   │   │   └── AIAssistModal.js    # AI campaign assistant modal
 │   │   ├── pages/
-│   │   ├── hooks/
-│   │   └── utils/
+│   │   │   ├── LandingPage.js      # Marketing landing page
+│   │   │   ├── Login.js            # Restaurant login
+│   │   │   ├── Signup.js           # Restaurant registration
+│   │   │   ├── Dashboard.js        # Main dashboard
+│   │   │   ├── Users.js            # Diner management
+│   │   │   ├── Campaigns.js        # Campaign management
+│   │   │   └── AccountSettings.js  # Account management
+│   │   ├── utils/
+│   │   │   └── api.js              # API client configuration
+│   │   └── *.css                   # Component-specific stylesheets
 │   └── package.json
 ├── database/
-│   └── schema.sql
+│   └── schema.sql                  # Database schema definition
+├── start.sh                        # Convenience startup script
+├── AI_SETUP.md                     # AI API setup instructions
 └── README.md
 ```
 
-## API Endpoints
+## 🔌 API Endpoints
 
-### Authentication
+### **Authentication**
 - `POST /api/auth/register` - Register a new restaurant
 - `POST /api/auth/login` - Login restaurant
-- `POST /api/auth/logout` - Logout restaurant
 - `GET /api/auth/profile` - Get restaurant profile
 - `PATCH /api/auth/profile` - Update restaurant profile
+- `DELETE /api/auth/account` - Delete restaurant account
 
-### Diners
+### **Diner Management**
 - `GET /api/diners` - Get all diners with pagination, sorting, and filtering
-- `GET /api/diners/search` - Search diners with advanced filters
-- `GET /api/diners/:id` - Get diner by ID
-- `GET /api/diners/city/:city` - Get diners by city
-- `GET /api/diners/state/:state` - Get diners by state
-- `GET /api/diners/seniority/:seniority` - Get diners by seniority
-- `GET /api/diners/interests/:interest` - Get diners by dining interests
+- `GET /api/diners/search` - Advanced diner search with multiple filters
+- `GET /api/diners/seniority-options` - Get available seniority levels
+- `POST /api/diners` - Add new diner to database
 
-### Campaigns
+### **Campaign Management**
 - `GET /api/campaigns` - Get all campaigns for authenticated restaurant
 - `POST /api/campaigns` - Create a new campaign
-- `GET /api/campaigns/:campaign_id` - Get campaign by ID
-- `PATCH /api/campaigns/:campaign_id` - Update campaign
-- `DELETE /api/campaigns/:campaign_id` - Delete campaign
-- `GET /api/campaigns/:campaign_id/recipients` - Get campaign recipients
-- `POST /api/campaigns/:campaign_id/diners/:diner_id` - Add diner to campaign
-- `DELETE /api/campaigns/:campaign_id/diners/:diner_id` - Remove diner from campaign
-- `GET /api/campaigns/diner/:diner_id` - Get campaigns for a specific diner
+- `PATCH /api/campaigns/:id` - Update campaign
+- `DELETE /api/campaigns/:id` - Delete campaign
+- `GET /api/campaigns/:id/recipients` - Get campaign recipients
+- `POST /api/campaigns/:id/recipients` - Add diners to campaign
+- `POST /api/campaigns/:id/send` - Send campaign to recipients
+- `GET /api/campaigns/:id/message-history` - Get campaign message history
+- `GET /api/campaigns/message/:id` - Get detailed message analytics
 
-## Setup Instructions
+### **AI Features**
+- `POST /api/ai/campaign/generate` - Generate campaign content using AI
 
-### Backend Setup
+### **Dashboard Analytics**
+- `GET /api/campaigns/dashboard/stats` - Get dashboard statistics
 
-1. Navigate to the backend directory:
+## 🚀 Quick Start
+
+### **Prerequisites**
+- Node.js (v18 or higher)
+- PostgreSQL (v12 or higher)
+- Git
+
+### **1. Clone Repository**
+```bash
+git clone https://github.com/nicholas-j96/get-more-diners.git
+cd get-more-diners
+```
+
+### **2. Database Setup**
+```bash
+# Create PostgreSQL database
+createdb get_more_diners_dev
+
+# Run database schema
+psql get_more_diners_dev < database/schema.sql
+
+# Optional: Seed with sample data
+cd backend && node run-seed.js
+```
+
+### **3. Backend Setup**
+```bash
+cd backend
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp env.example .env
+# Edit .env with your database credentials:
+# PORT=3000
+# DB_HOST=localhost
+# DB_PORT=5432
+# DB_NAME=get_more_diners_dev
+# DB_USER=your_username
+# DB_PASSWORD=your_password
+# JWT_SECRET=your_jwt_secret
+
+# Start development server
+npm run dev
+```
+
+### **4. Frontend Setup**
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+echo "PORT=3001" > .env
+echo "REACT_APP_API_URL=http://localhost:3000/api" >> .env
+
+# Start development server
+npm start
+```
+
+### **5. Quick Start Script**
+```bash
+# Make startup script executable
+chmod +x start.sh
+
+# Start both backend and frontend
+./start.sh
+```
+
+### **6. Access Application**
+- **Frontend**: http://localhost:3001
+- **Backend API**: http://localhost:3000/api
+- **Default Login**: Use the registration form to create a new restaurant account
+
+## 🤖 AI Setup (Optional)
+
+To enable AI-powered campaign generation:
+
+1. **Get Google Gemini API Key**:
+   - Visit [Google AI Studio](https://makersuite.google.com/app/apikey)
+   - Create a new API key
+
+2. **Configure Backend**:
    ```bash
    cd backend
+   echo "GEMINI_API_KEY=your_api_key_here" >> .env
    ```
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Set up environment variables:
-   ```bash
-   cp env.example .env
-   # Edit .env with your database credentials
-   ```
-
-4. Set up PostgreSQL database:
-   ```bash
-   # Create database
-   createdb get_more_diners
-   
-   # Run schema
-   psql get_more_diners < ../database/schema.sql
-   ```
-
-5. Start the development server:
+3. **Restart Backend**:
    ```bash
    npm run dev
    ```
 
-### Frontend Setup
+See `AI_SETUP.md` for detailed instructions.
 
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
+## 🎨 Design System
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+### **Color Palette**
+- **Primary**: Orange (#f97316) - Call-to-action buttons, highlights
+- **Secondary**: Gunmetal Grey (#2d3748) - Backgrounds, cards
+- **Success**: Green (#10b981) - Success states, positive actions
+- **Text**: Light grey (#f7fafc) - Primary text on dark backgrounds
+- **Accent**: Dark gunmetal (#1a202c) - Borders, secondary elements
 
-3. Start the development server:
-   ```bash
-   npm start
-   ```
+### **Typography**
+- **Font Family**: System fonts (Inter, -apple-system, BlinkMacSystemFont)
+- **Font Weights**: 400 (normal), 500 (medium), 600 (semibold), 700 (bold)
+- **Responsive Sizing**: Fluid typography with CSS custom properties
 
-## Database Schema
+### **Components**
+- **Buttons**: Rounded corners, hover effects, consistent padding
+- **Cards**: Subtle shadows, rounded corners, proper spacing
+- **Modals**: Dark overlays, centered content, smooth animations
+- **Forms**: Clean inputs, validation states, accessible labels
 
-The application uses three main tables:
+## 📊 Database Schema
 
-- **restaurants**: Stores restaurant information and authentication data
-- **diners**: Stores diner information including preferences and contact details
-- **campaigns**: Stores marketing campaign information
-- **campaign_recipients**: Junction table linking campaigns to diners
+### **Core Tables**
+- **restaurants**: Restaurant accounts and authentication
+- **diners**: Customer information and preferences
+- **campaigns**: Marketing campaign data
+- **campaign_recipients**: Campaign-to-diner relationships
+- **message_history**: Sent message tracking and analytics
 
-## Key Features Implementation
+### **Key Features**
+- **Optimized Indexes**: Fast queries on common search patterns
+- **Relationship Integrity**: Foreign key constraints
+- **Data Validation**: Proper data types and constraints
+- **Analytics Support**: Structured data for performance tracking
 
-### Diner Search and Filtering
-The API supports comprehensive filtering of diners by:
-- Name (partial matching)
-- Seniority level
-- City and state
-- Dining interests (using PostgreSQL arrays)
-- Advanced search with multiple filters
+## 🔒 Security Features
 
-### Campaign Management
-- Create campaigns with email or SMS types
-- Add/remove diners from campaign lists
-- Track campaign recipients and their status
-- View communication history per diner
+- **JWT Authentication**: Secure token-based authentication
+- **Password Hashing**: bcrypt for secure password storage
+- **Input Validation**: Server-side validation for all inputs
+- **SQL Injection Prevention**: Parameterized queries
+- **CORS Configuration**: Proper cross-origin resource sharing
+- **Environment Variables**: Sensitive data protection
 
-### Authentication
-- JWT-based authentication for restaurants
-- Password hashing with bcrypt
-- Protected routes for campaign management
+## 🚧 Future Roadmap
 
-## Future Enhancements
+### **Phase 1: Enhanced Analytics**
+- **Individual Diner History**: Track complete interaction history per diner
+- **Geographic Data Visualization**: Maps showing diner distribution and campaign reach
+- **Advanced Reporting**: Detailed analytics dashboard with charts and insights
 
-- Email/SMS service integration
-- AI-powered message generation
-- Campaign analytics and reporting
-- Bulk import of diner data
-- Advanced filtering and search capabilities
+### **Phase 2: AI Improvements**
+- **Enhanced AI Message Generation**: More sophisticated content creation
+- **A/B Testing**: AI-powered campaign variant testing
+- **Personalization Engine**: Dynamic content based on diner preferences
+- **Sentiment Analysis**: Analyze diner responses and feedback
+
+### **Phase 3: Business Features**
+- **Payment Integrations**: Stripe/PayPal integration for premium features
+- **Account Verification**: Email/SMS verification for restaurant accounts
+- **Multi-location Support**: Manage multiple restaurant locations
+- **Team Management**: Multi-user access with role-based permissions
+
+### **Phase 4: Security & Compliance**
+- **Security Audit**: Comprehensive security review of all components
+- **PostgreSQL Security Hardening**: Database security best practices
+- **GDPR Compliance**: Data protection and privacy controls
+- **Penetration Testing**: Third-party security assessment
+
+### **Phase 5: Advanced Features**
+- **Email/SMS Service Integration**: Real message delivery
+- **Campaign Automation**: Scheduled and triggered campaigns
+- **Customer Segmentation**: Advanced diner categorization
+- **API Rate Limiting**: Production-ready API protection
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📞 Support
+
+For support, email support@getmorediners.com or create an issue in the GitHub repository.
+
+---
+
+**Built with ❤️ for restaurants who want to get more diners through smart marketing.**
