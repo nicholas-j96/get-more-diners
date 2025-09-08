@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Settings, Search, BarChart3, Plus } from 'lucide-react';
+import { campaignAPI } from '../utils/api';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [restaurant, setRestaurant] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    unique_diners: 0,
+    active_campaigns: 0,
+    messages_sent_this_month: 0
+  });
 
   useEffect(() => {
     // Check if user is authenticated
@@ -25,6 +31,8 @@ const Dashboard = () => {
       return;
     }
     
+    // Fetch dashboard statistics
+    fetchDashboardStats();
     setLoading(false);
   }, [navigate]);
 
@@ -43,6 +51,15 @@ const Dashboard = () => {
 
   const handleAddNewCampaign = () => {
     navigate('/campaigns');
+  };
+
+  const fetchDashboardStats = async () => {
+    try {
+      const response = await campaignAPI.getDashboardStats();
+      setStats(response.data);
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+    }
   };
 
   if (loading) {
@@ -163,19 +180,19 @@ const Dashboard = () => {
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Total Diners</h3>
-            <p className="text-3xl font-bold text-blue-600">0</p>
-            <p className="text-sm text-gray-500 mt-1">In your database</p>
+            <p className="text-3xl font-bold text-blue-600">{stats.unique_diners}</p>
+            <p className="text-sm text-gray-500 mt-1">In your campaigns</p>
           </div>
           
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Active Campaigns</h3>
-            <p className="text-3xl font-bold text-green-600">0</p>
+            <p className="text-3xl font-bold text-green-600">{stats.active_campaigns}</p>
             <p className="text-sm text-gray-500 mt-1">Currently running</p>
           </div>
           
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Messages Sent</h3>
-            <p className="text-3xl font-bold text-purple-600">0</p>
+            <p className="text-3xl font-bold text-purple-600">{stats.messages_sent_this_month}</p>
             <p className="text-sm text-gray-500 mt-1">This month</p>
           </div>
         </div>

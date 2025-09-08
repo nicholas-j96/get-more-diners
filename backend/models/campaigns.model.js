@@ -201,6 +201,105 @@ const updateCampaignRecipientsStatus = (campaignId, emailResults) => {
     })
 }
 
+/**
+ * Records a message send in the message history
+ */
+const recordMessageHistory = (campaignId, subject, recipientCount) => {
+    // Mock open and click rates (in production, these would come from email service analytics)
+    const openRate = Math.random() * 0.4 + 0.2; // Random between 20-60%
+    const clickRate = Math.random() * 0.1 + 0.05; // Random between 5-15%
+    
+    return db.query(`
+        INSERT INTO message_history (campaign_id, subject, recipient_count, open_rate, click_rate)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING *
+    `, [campaignId, subject, recipientCount, openRate, clickRate])
+    .then((result) => {
+        console.log(`📝 MESSAGE HISTORY: Recorded message send for campaign ${campaignId} with ${recipientCount} recipients (Open: ${(openRate * 100).toFixed(1)}%, Click: ${(clickRate * 100).toFixed(1)}%)`);
+        return result.rows[0];
+    })
+}
+
+/**
+ * Gets message history for a campaign
+ */
+const getMessageHistory = (campaignId) => {
+    return db.query(`
+        SELECT id, subject, sent_at, recipient_count, open_rate, click_rate
+        FROM message_history
+        WHERE campaign_id = $1
+        ORDER BY sent_at DESC
+    `, [campaignId])
+    .then((result) => {
+        return result.rows;
+    })
+}
+
+/**
+ * Gets detailed message data including campaign content
+ */
+const getMessageDetail = (messageId) => {
+    return db.query(`
+        SELECT 
+            mh.id,
+            mh.subject,
+            mh.sent_at,
+            mh.recipient_count,
+            mh.open_rate,
+            mh.click_rate,
+            c.message as campaign_message,
+            c.campaign_type
+        FROM message_history mh
+        JOIN campaigns c ON mh.campaign_id = c.id
+        WHERE mh.id = $1
+    `, [messageId])
+    .then((result) => {
+        if (result.rows.length === 0) {
+            throw new Error('Message not found');
+        }
+        return result.rows[0];
+    })
+}
+
+/**
+ * Gets dashboard statistics for a restaurant
+ */
+const getDashboardStats = (restaurantId) => {
+    return db.query(`
+        WITH unique_diners AS (
+            SELECT COUNT(DISTINCT cr.diner_id) as unique_diner_count
+            FROM campaign_recipients cr
+            JOIN campaigns c ON cr.campaign_id = c.id
+            WHERE c.restaurant_id = $1
+        ),
+        active_campaigns AS (
+            SELECT COUNT(*) as active_campaign_count
+            FROM campaigns
+            WHERE restaurant_id = $1 AND status = 'active'
+        ),
+        messages_sent AS (
+            SELECT COALESCE(messages_sent_this_month, 0) as messages_sent_count
+            FROM restaurants
+            WHERE id = $1
+        )
+        SELECT 
+            ud.unique_diner_count,
+            ac.active_campaign_count,
+            ms.messages_sent_count
+        FROM unique_diners ud
+        CROSS JOIN active_campaigns ac
+        CROSS JOIN messages_sent ms
+    `, [restaurantId])
+    .then((result) => {
+        const stats = result.rows[0];
+        return {
+            unique_diners: parseInt(stats.unique_diner_count) || 0,
+            active_campaigns: parseInt(stats.active_campaign_count) || 0,
+            messages_sent_this_month: parseInt(stats.messages_sent_count) || 0
+        };
+    })
+}
+
 module.exports = {
     selectAllCampaigns,
     selectCampaignById,
@@ -216,5 +315,9 @@ module.exports = {
     updateCampaignStatusAndSentAt,
     recordUniqueDinersForRestaurant,
     incrementMessagesSentCounter,
-    updateCampaignRecipientsStatus
+    updateCampaignRecipientsStatus,
+    recordMessageHistory,
+    getMessageHistory,
+    getMessageDetail,
+    getDashboardStats
 }

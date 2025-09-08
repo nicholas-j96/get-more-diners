@@ -10,7 +10,10 @@ const {
     getCampaignRecipients,
     getDinerCampaigns,
     addDinersToCampaign,
-    sendEmails
+    sendEmails,
+    getDashboardStatsController,
+    getMessageHistoryController,
+    getMessageDetailController
 } = require("../controllers/campaigns.controller");
 const { authenticateToken } = require("../middleware/auth.middleware");
 
@@ -46,5 +49,17 @@ campaignsRouter
 campaignsRouter
     .route("/diner/:diner_id")
     .get(getDinerCampaigns)   // GET /api/campaigns/diner/456 - get campaigns for specific diner
+
+campaignsRouter
+    .route("/dashboard/stats")
+    .get(getDashboardStatsController);  // GET /api/campaigns/dashboard/stats - Get dashboard statistics
+
+campaignsRouter
+    .route("/:campaign_id/message-history")
+    .get(getMessageHistoryController);  // GET /api/campaigns/123/message-history - Get message history for campaign
+
+campaignsRouter
+    .route("/message/:message_id")
+    .get(getMessageDetailController);  // GET /api/campaigns/message/456 - Get detailed message data
 
 module.exports = campaignsRouter;

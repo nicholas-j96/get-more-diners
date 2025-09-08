@@ -53,7 +53,8 @@ const Users = () => {
   const fetchSeniorityOptions = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:3001/api/diners/seniority-options', {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
+      const response = await axios.get(apiUrl + '/diners/seniority-options', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -103,7 +104,8 @@ const Users = () => {
     try {
       setLoadingCampaigns(true);
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:3001/api/campaigns', {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
+      const response = await axios.get(apiUrl + '/campaigns', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -144,7 +146,8 @@ const Users = () => {
       
       // Add diners to each selected campaign
       for (const campaignId of selectedCampaigns) {
-        await axios.post(`http://localhost:3001/api/campaigns/${campaignId}/recipients`, 
+        const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
+        await axios.post(apiUrl + `/campaigns/${campaignId}/recipients`, 
           { dinerIds: dinerIds },
           {
             headers: {
@@ -193,7 +196,8 @@ const Users = () => {
         selectedSeniorities.forEach(seniority => params.append('seniority', seniority));
       }
       
-      const response = await axios.get(`http://localhost:3001/api/diners?${params.toString()}`, {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
+      const response = await axios.get(apiUrl + `/diners?${params.toString()}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

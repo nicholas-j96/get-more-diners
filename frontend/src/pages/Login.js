@@ -27,7 +27,8 @@ const Login = () => {
     try {
       console.log('Attempting login with email:', formData.email);
       
-      const response = await axios.post('http://localhost:3001/api/auth/login', {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
+      const response = await axios.post(apiUrl + '/auth/login', {
         email: formData.email,
         password: formData.password
       });
