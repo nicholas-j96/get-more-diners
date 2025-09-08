@@ -7,6 +7,7 @@ require('dotenv').config();
 const dinersRouter = require('./routes/diners.routes');
 const campaignsRouter = require('./routes/campaigns.routes');
 const authRouter = require('./routes/auth.routes');
+const aiRouter = require('./routes/ai.routes');
 const { authenticateToken } = require('./middleware/auth.middleware');
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use('/api/auth', authRouter);
 app.use('/api/diners', dinersRouter);
 app.use('/api/campaigns', campaignsRouter);
+app.use('/api/ai', aiRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
