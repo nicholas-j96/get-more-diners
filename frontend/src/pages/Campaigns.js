@@ -107,13 +107,21 @@ const Campaigns = () => {
   const fetchCampaignDiners = async (campaignId) => {
     try {
       setLoadingDiners(true);
-      console.log('Fetching diners for campaign:', campaignId);
+      console.log('🔍 Fetching diners for campaign:', campaignId);
+      console.log('🔍 API URL:', `/api/campaigns/${campaignId}/recipients`);
+      
+      const token = localStorage.getItem('token');
+      console.log('🔍 Token exists:', !!token);
+      
       const response = await campaignAPI.getCampaignRecipients(campaignId);
-      console.log('Campaign diners response:', response.data);
+      console.log('✅ Campaign diners response:', response.data);
+      console.log('✅ Response length:', response.data?.length);
+      
       setCampaignDiners(response.data);
     } catch (error) {
-      console.error('Error fetching campaign diners:', error);
-      console.error('Error response:', error.response?.data);
+      console.error('❌ Error fetching campaign diners:', error);
+      console.error('❌ Error response:', error.response?.data);
+      console.error('❌ Error status:', error.response?.status);
       setCampaignDiners([]);
     } finally {
       setLoadingDiners(false);

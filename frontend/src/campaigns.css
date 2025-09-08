@@ -1,7 +1,7 @@
 /* Campaigns Page Specific Styles */
 
 .campaigns-container {
-  max-width: 80rem;
+  max-width: 60rem;
   margin: 0 auto;
   padding: var(--space-6);
   min-height: 100vh;

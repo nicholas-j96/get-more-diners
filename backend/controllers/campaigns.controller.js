@@ -32,7 +32,8 @@ const getAllCampaigns = (req, res, next) => {
 
 const getCampaignById = (req, res, next) => {
     const { campaign_id } = req.params
-    return checkCampaignExists(campaign_id)
+    const restaurantId = req.user.id
+    return checkCampaignExists(campaign_id, restaurantId)
     .then(() => {
         return selectCampaignById(campaign_id)
     })
@@ -123,7 +124,8 @@ const removeDinerFromCampaign = (req, res, next) => {
 
 const getCampaignRecipients = (req, res, next) => {
     const { campaign_id } = req.params
-    return checkCampaignExists(campaign_id)
+    const restaurantId = req.user.id
+    return checkCampaignExists(campaign_id, restaurantId)
     .then(() => {
         return selectCampaignRecipients(campaign_id)
     })

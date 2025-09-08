@@ -15,6 +15,7 @@ const Users = () => {
   const [seniorityOptions, setSeniorityOptions] = useState([]);
   const [selectedDiners, setSelectedDiners] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
   // Campaign modal state
   const [showCampaignModal, setShowCampaignModal] = useState(false);
@@ -41,6 +42,20 @@ const Users = () => {
     // Fetch seniority options on component mount
     fetchSeniorityOptions();
   }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isDropdownOpen && !event.target.closest('.diners-custom-dropdown')) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
 
   // Update selectAll state when individual selections change
   useEffect(() => {
@@ -72,6 +87,10 @@ const Users = () => {
         ? prev.filter(s => s !== seniority)
         : [...prev, seniority]
     );
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
   };
 
   const handleDinerSelect = (dinerId) => {
@@ -242,22 +261,28 @@ const Users = () => {
             className="diners-search-input"
           />
           <div className="diners-select-container">
-            <select
-              multiple
-              value={selectedSeniorities}
-              onChange={(e) => {
-                const values = Array.from(e.target.selectedOptions, option => option.value);
-                setSelectedSeniorities(values);
-              }}
-              className="diners-select"
-              size="3"
-            >
-              {seniorityOptions.map((seniority) => (
-                <option key={seniority} value={seniority}>{seniority}</option>
-              ))}
-            </select>
-            <div className="diners-select-help">
-              Hold Ctrl/Cmd to select multiple
+            <div className="diners-custom-dropdown">
+              <div className="diners-dropdown-header" onClick={toggleDropdown}>
+                <span className="diners-dropdown-label">
+                  Filter by Level {selectedSeniorities.length > 0 && `(${selectedSeniorities.length})`}
+                </span>
+                <span className={`diners-dropdown-arrow ${isDropdownOpen ? 'open' : ''}`}>▼</span>
+              </div>
+              {isDropdownOpen && (
+                <div className="diners-dropdown-content">
+                  {seniorityOptions.map((seniority) => (
+                    <label key={seniority} className="diners-dropdown-option">
+                      <input
+                        type="checkbox"
+                        checked={selectedSeniorities.includes(seniority)}
+                        onChange={() => handleSeniorityChange(seniority)}
+                        className="diners-dropdown-checkbox"
+                      />
+                      <span className="diners-dropdown-text">{seniority}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

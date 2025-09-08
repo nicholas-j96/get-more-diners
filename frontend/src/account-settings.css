@@ -1,7 +1,7 @@
 /* Account Settings Page Specific Styles */
 
 .account-settings-container {
-  max-width: 48rem;
+  max-width: 40rem;
   margin: 0 auto;
   padding: var(--space-6);
   min-height: 100vh;

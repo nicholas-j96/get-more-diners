@@ -4,10 +4,10 @@ const ENV = process.env.NODE_ENV || 'development'
 
 require('dotenv').config({path: `${__dirname}/.env.${ENV}`})
 
-if (!process.env.PGDATABASE && !process.env.DATABASE_URL) {
-    throw new Error("No PGDATABASE configured")
+if (!process.env.DB_NAME && !process.env.DATABASE_URL) {
+    throw new Error("No DB_NAME configured")
 } else { 
-    console.log(`Connected to ${process.env.PGDATABASE || 'production database'}`)
+    console.log(`Connected to ${process.env.DB_NAME || 'production database'}`)
 }
 
 const config = {};

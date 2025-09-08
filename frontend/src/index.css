@@ -13,6 +13,37 @@
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+  background: 
+    linear-gradient(135deg, #ff6b35 0%, #ff8c5a 25%, #ff6b35 50%, #ff8c5a 75%, #ff6b35 100%),
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 8px,
+      rgba(255, 255, 255, 0.2) 8px,
+      rgba(255, 255, 255, 0.2) 16px
+    );
+  background-size: 100% 100%, 16px 16px;
+  min-height: 100vh;
+}
+
+html::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(
+      135deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.15) 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.1) 75%,
+      transparent 100%
+    );
+  pointer-events: none;
+  z-index: -1;
 }
 
 body {
@@ -23,7 +54,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;
   color: var(--color-text-primary);
-  background-color: var(--color-bg-primary);
+  background-color: transparent;
+  min-height: 100vh;
 }
 
 /* CSS Custom Properties - Color Scheme */
