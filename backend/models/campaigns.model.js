@@ -82,7 +82,8 @@ const removeDinerFromCampaignById = (campaignId, dinerId) => {
 const selectCampaignRecipients = (campaignId) => {
     return db.query(`
         SELECT d.id, d.first_name, d.last_name, d.email, d.phone, d.city, d.state,
-               cr.sent_at, cr.status
+               cr.sent_at, cr.status,
+               (SELECT COUNT(*) FROM message_history WHERE campaign_id = $1) as messages_sent
         FROM campaign_recipients cr
         JOIN diners d ON cr.diner_id = d.id
         WHERE cr.campaign_id = $1
@@ -203,28 +204,61 @@ const updateCampaignRecipientsStatus = (campaignId, emailResults) => {
 /**
  * Records a message send in the message history
  */
-const recordMessageHistory = (campaignId, subject, recipientCount) => {
-    // Mock implementation since message_history table doesn't exist
-    console.log(`📝 MOCK: Recorded message history for campaign ${campaignId}: "${subject}" to ${recipientCount} recipients`);
-    return Promise.resolve({ id: Date.now(), campaign_id: campaignId, subject, recipient_count: recipientCount });
+const recordMessageHistory = (campaignId, subject, message, recipientCount) => {
+    // Mock open and click rates (in production, these would come from email service analytics)
+    const openRate = Math.random() * 0.4 + 0.2; // Random between 20-60%
+    const clickRate = Math.random() * 0.1 + 0.05; // Random between 5-15%
+    
+    return db.query(`
+        INSERT INTO message_history (campaign_id, subject, message, recipient_count, open_rate, click_rate)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING *
+    `, [campaignId, subject, message, recipientCount, openRate, clickRate])
+    .then((result) => {
+        console.log(`📝 MESSAGE HISTORY: Recorded message send for campaign ${campaignId} with ${recipientCount} recipients (Open: ${(openRate * 100).toFixed(1)}%, Click: ${(clickRate * 100).toFixed(1)}%)`);
+        return result.rows[0];
+    })
 }
 
 /**
  * Gets message history for a campaign
  */
 const getMessageHistory = (campaignId) => {
-    // Mock implementation since message_history table doesn't exist
-    console.log(`📝 MOCK: Getting message history for campaign ${campaignId}`);
-    return Promise.resolve([]);
+    return db.query(`
+        SELECT id, subject, message, sent_at, recipient_count, open_rate, click_rate
+        FROM message_history
+        WHERE campaign_id = $1
+        ORDER BY sent_at DESC
+    `, [campaignId])
+    .then((result) => {
+        return result.rows;
+    })
 }
 
 /**
  * Gets detailed message data including campaign content
  */
 const getMessageDetail = (messageId) => {
-    // Mock implementation since message_history table doesn't exist
-    console.log(`📝 MOCK: Getting message detail for message ${messageId}`);
-    return Promise.resolve(null);
+    return db.query(`
+        SELECT 
+            mh.id,
+            mh.subject,
+            mh.message,
+            mh.sent_at,
+            mh.recipient_count,
+            mh.open_rate,
+            mh.click_rate,
+            c.campaign_type
+        FROM message_history mh
+        JOIN campaigns c ON mh.campaign_id = c.id
+        WHERE mh.id = $1
+    `, [messageId])
+    .then((result) => {
+        if (result.rows.length === 0) {
+            throw new Error('Message not found');
+        }
+        return result.rows[0];
+    })
 }
 
 /**
@@ -244,7 +278,10 @@ const getDashboardStats = (restaurantId) => {
             WHERE restaurant_id = $1
         ),
         messages_sent AS (
-            SELECT 0 as messages_sent_count
+            SELECT COUNT(*) as messages_sent_count
+            FROM message_history mh
+            JOIN campaigns c ON mh.campaign_id = c.id
+            WHERE c.restaurant_id = $1
         )
         SELECT 
             ud.unique_diner_count,
