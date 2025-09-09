@@ -243,7 +243,7 @@ const sendEmails = (req, res, next) => {
         })
         .then(() => {
             // Record message in history FIRST
-            return recordMessageHistory(campaign_id, campaign.subject, recipients.length)
+            return recordMessageHistory(campaign_id, campaign.subject, campaign.message, recipients.length)
         })
         .then(() => {
             // Update campaign_recipients status to 'sent' ONLY after successful history recording
