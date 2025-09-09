@@ -36,6 +36,7 @@ This guide will help you deploy your Get More Diners application to Render, incl
    - **Build Command**: `cd backend && npm install`
    - **Start Command**: `cd backend && npm start`
    - **Plan**: Free
+   - **Node Version**: 18.x (or latest LTS)
 
 3. **Environment Variables**
    Set these in Render dashboard:
@@ -117,9 +118,10 @@ This guide will help you deploy your Get More Diners application to Render, incl
 ### Common Issues
 
 1. **Build Failures**
-   - Check Node.js version compatibility
+   - Check Node.js version compatibility (use 18.x or latest LTS)
    - Ensure all dependencies are in package.json
    - Check build logs in Render dashboard
+   - **"command not found" errors**: Make sure build commands don't have backticks or special characters
 
 2. **Database Connection Issues**
    - Verify DATABASE_URL format
