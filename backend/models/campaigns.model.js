@@ -83,7 +83,7 @@ const selectCampaignRecipients = (campaignId) => {
     return db.query(`
         SELECT d.id, d.first_name, d.last_name, d.email, d.phone, d.city, d.state,
                cr.sent_at, cr.status,
-               (SELECT COUNT(*) FROM message_history WHERE campaign_id = $1) as messages_sent
+               COALESCE((SELECT COUNT(*) FROM message_history WHERE campaign_id = $1), 0) as messages_sent
         FROM campaign_recipients cr
         JOIN diners d ON cr.diner_id = d.id
         WHERE cr.campaign_id = $1
@@ -91,6 +91,24 @@ const selectCampaignRecipients = (campaignId) => {
     `, [campaignId])
     .then((result) => {
         return result.rows
+    })
+    .catch((error) => {
+        // If message_history table doesn't exist, fall back to simpler query
+        if (error.code === '42P01' && error.message.includes('message_history')) {
+            return db.query(`
+                SELECT d.id, d.first_name, d.last_name, d.email, d.phone, d.city, d.state,
+                       cr.sent_at, cr.status,
+                       0 as messages_sent
+                FROM campaign_recipients cr
+                JOIN diners d ON cr.diner_id = d.id
+                WHERE cr.campaign_id = $1
+                ORDER BY d.last_name, d.first_name
+            `, [campaignId])
+            .then((result) => {
+                return result.rows
+            })
+        }
+        throw error
     })
 }
 
