@@ -18,6 +18,11 @@ app.use(cors());
 app.use(morgan('combined'));
 app.use(express.json());
 
+// Health check route
+app.get('/health', (req, res) => {
+    res.json({ status: 'OK', message: 'Backend is running' });
+});
+
 // Routes
 app.use('/api/auth', authRouter);
 app.use('/api/diners', dinersRouter);
