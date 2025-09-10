@@ -14,7 +14,14 @@ const app = express();
 
 // Middleware
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+    origin: [
+        'https://get-more-diners-jqi2.onrender.com',
+        'http://localhost:3001',
+        'http://localhost:3000'
+    ],
+    credentials: true
+}));
 app.use(morgan('combined'));
 app.use(express.json());
 
