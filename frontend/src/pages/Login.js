@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import axios from 'axios';
+import api from '../utils/api';
 import '../login.css';
 
 const Login = () => {
@@ -28,8 +28,7 @@ const Login = () => {
     try {
       console.log('Attempting login with email:', formData.email);
       
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
-      const response = await axios.post(apiUrl + '/auth/login', {
+      const response = await api.post('/auth/login', {
         email: formData.email,
         password: formData.password
       });

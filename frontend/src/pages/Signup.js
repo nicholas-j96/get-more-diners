@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import axios from 'axios';
+import api from '../utils/api';
 import '../signup.css';
 
 const Signup = () => {
@@ -51,10 +51,9 @@ const Signup = () => {
         state: formData.state
       });
       
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
-      console.log('Making request to:', apiUrl + '/auth/register');
+      console.log('Making request to:', '/auth/register');
       
-      const response = await axios.post(apiUrl + '/auth/register', {
+      const response = await api.post('/auth/register', {
         name: formData.name,
         email: formData.email,
         password: formData.password,
