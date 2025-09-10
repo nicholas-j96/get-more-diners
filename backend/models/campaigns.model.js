@@ -236,6 +236,14 @@ const recordMessageHistory = (campaignId, subject, message, recipientCount) => {
         console.log(`📝 MESSAGE HISTORY: Recorded message send for campaign ${campaignId} with ${recipientCount} recipients (Open: ${(openRate * 100).toFixed(1)}%, Click: ${(clickRate * 100).toFixed(1)}%)`);
         return result.rows[0];
     })
+    .catch((error) => {
+        // If message_history table doesn't exist, just log and continue
+        if (error.code === '42P01' && error.message.includes('message_history')) {
+            console.log(`📝 MESSAGE HISTORY: Table doesn't exist, skipping history recording for campaign ${campaignId}`);
+            return { id: null, campaign_id: campaignId, recipient_count: recipientCount };
+        }
+        throw error;
+    })
 }
 
 /**
