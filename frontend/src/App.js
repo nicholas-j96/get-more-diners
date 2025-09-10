@@ -14,6 +14,7 @@ import Campaigns from './pages/Campaigns';
 import AccountSettings from './pages/AccountSettings';
 
 function App() {
+  console.log('App component rendered with HashRouter');
   return (
     <Router>
       <div className="App">
@@ -56,6 +57,16 @@ function App() {
                 <AccountSettings />
               </main>
             </>
+          } />
+          
+          {/* Fallback route for any unmatched paths */}
+          <Route path="*" element={
+            <div style={{ padding: '20px', textAlign: 'center' }}>
+              <h1>Route Not Found</h1>
+              <p>Current URL: {window.location.href}</p>
+              <p>Hash: {window.location.hash}</p>
+              <a href="/#/">Go to Home</a>
+            </div>
           } />
         </Routes>
       </div>
