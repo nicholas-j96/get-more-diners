@@ -109,8 +109,9 @@ const addDinerToCampaign = (req, res, next) => {
 
 const removeDinerFromCampaign = (req, res, next) => {
     const { campaign_id, diner_id } = req.params
+    const restaurantId = req.user.id
     return Promise.all([
-        checkCampaignExists(campaign_id),
+        checkCampaignExists(campaign_id, restaurantId),
         checkDinerExists(diner_id)
     ])
     .then(() => {
@@ -138,12 +139,13 @@ const getCampaignRecipients = (req, res, next) => {
 const addDinersToCampaign = (req, res, next) => {
     const { campaign_id } = req.params
     const { dinerIds } = req.body
+    const restaurantId = req.user.id
     
     if (!dinerIds || !Array.isArray(dinerIds) || dinerIds.length === 0) {
         return res.status(400).send({ message: 'dinerIds array is required and must not be empty' })
     }
     
-    return checkCampaignExists(campaign_id)
+    return checkCampaignExists(campaign_id, restaurantId)
     .then(() => {
         // Check that all diners exist
         const dinerChecks = dinerIds.map(dinerId => checkDinerExists(dinerId))
