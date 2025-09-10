@@ -69,6 +69,22 @@ const seed = ({ dinersData, restaurantsData, campaignsData }) => {
         `)
     })
     .then(() => {
+        // Create message_history table
+        return db.query(`
+            CREATE TABLE message_history (
+                id SERIAL PRIMARY KEY,
+                campaign_id INTEGER NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+                subject VARCHAR(255) NOT NULL,
+                message TEXT NOT NULL,
+                sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                recipient_count INTEGER NOT NULL,
+                open_rate DECIMAL(5,2) DEFAULT 0.0,
+                click_rate DECIMAL(5,2) DEFAULT 0.0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        `)
+    })
+    .then(() => {
         // Create indexes for better performance
         return db.query(`
             CREATE INDEX idx_diners_city ON diners(city);
@@ -78,6 +94,8 @@ const seed = ({ dinersData, restaurantsData, campaignsData }) => {
             CREATE INDEX idx_campaigns_restaurant ON campaigns(restaurant_id);
             CREATE INDEX idx_campaign_recipients_campaign ON campaign_recipients(campaign_id);
             CREATE INDEX idx_campaign_recipients_diner ON campaign_recipients(diner_id);
+            CREATE INDEX idx_message_history_campaign ON message_history(campaign_id);
+            CREATE INDEX idx_message_history_sent_at ON message_history(sent_at);
         `)
     })
     .then(() => {
