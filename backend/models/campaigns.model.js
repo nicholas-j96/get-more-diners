@@ -259,6 +259,14 @@ const getMessageHistory = (campaignId) => {
     .then((result) => {
         return result.rows;
     })
+    .catch((error) => {
+        // If message_history table doesn't exist, return empty array
+        if (error.code === '42P01' && error.message.includes('message_history')) {
+            console.log(`📝 MESSAGE HISTORY: Table doesn't exist, returning empty history for campaign ${campaignId}`);
+            return [];
+        }
+        throw error;
+    })
 }
 
 /**
@@ -284,6 +292,14 @@ const getMessageDetail = (messageId) => {
             throw new Error('Message not found');
         }
         return result.rows[0];
+    })
+    .catch((error) => {
+        // If message_history table doesn't exist, return null
+        if (error.code === '42P01' && error.message.includes('message_history')) {
+            console.log(`📝 MESSAGE HISTORY: Table doesn't exist, returning null for message ${messageId}`);
+            return null;
+        }
+        throw error;
     })
 }
 
@@ -324,6 +340,40 @@ const getDashboardStats = (restaurantId) => {
             active_campaigns: parseInt(stats.active_campaign_count) || 0,
             messages_sent_this_month: parseInt(stats.messages_sent_count) || 0
         };
+    })
+    .catch((error) => {
+        // If message_history table doesn't exist, use simpler query
+        if (error.code === '42P01' && error.message.includes('message_history')) {
+            console.log(`📝 MESSAGE HISTORY: Table doesn't exist, using simplified dashboard stats for restaurant ${restaurantId}`);
+            return db.query(`
+                WITH unique_diners AS (
+                    SELECT COUNT(DISTINCT cr.diner_id) as unique_diner_count
+                    FROM campaign_recipients cr
+                    JOIN campaigns c ON cr.campaign_id = c.id
+                    WHERE c.restaurant_id = $1
+                ),
+                active_campaigns AS (
+                    SELECT COUNT(*) as active_campaign_count
+                    FROM campaigns
+                    WHERE restaurant_id = $1
+                )
+                SELECT 
+                    ud.unique_diner_count,
+                    ac.active_campaign_count,
+                    0 as messages_sent_count
+                FROM unique_diners ud
+                CROSS JOIN active_campaigns ac
+            `, [restaurantId])
+            .then((result) => {
+                const stats = result.rows[0];
+                return {
+                    unique_diners: parseInt(stats.unique_diner_count) || 0,
+                    active_campaigns: parseInt(stats.active_campaign_count) || 0,
+                    messages_sent_this_month: 0
+                };
+            })
+        }
+        throw error;
     })
 }
 
